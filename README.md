@@ -9,14 +9,16 @@ Because this package will continue to grow and create diagnostics and visuals fo
 
 `ggDiagnose`:
 
-- [ ] 1. lm, glm (from `stats` package)
+- [x] 1. lm, glm (from `stats` package)
 - [ ] 2. gam 
-- [ ] 3. glmnet (from `glmnet` packages]
+- [x] 3. glmnet (from `glmnet` packages)
     - [ ] plot.mrelnet, plot.multnet needed
-- [ ] trees
+- [ ] 4. trees
+- [ ] 5. randomForest
 
 `ggVis`:
 - [ ] 1. sp
 - [ ] 2. dendrogram
 - [ ] 3. matrix (for heatmap?)
 
+*Not sue I should work on `ggVis.__` (just `ggplot2` version of plot) for objects that are not models. If the goal is to help starting data scientists / statisticians be able to do everything with `ggplot2` style graphics it probably isn't that helpful/ useful.
