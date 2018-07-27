@@ -124,6 +124,10 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
 
   n <- nrow(expanded_df)
 
+  if (id.n > 0L) { ## label the largest residuals
+    iid <- 1L:id.n
+  }
+
   if (any(show[2L:6L])) {
     s <- if (inherits(x, "rlm")) {
       x$s
@@ -141,8 +145,7 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
         } else {
           stats::cooks.distance(x, sd = s, res = expanded_df$`.resid`)
         }
-
-      expanded_df$`.show.cooks` <- 1:n %in% order(-expanded_df$`.cooksd2`)[iid]# index of largest 'id.n' ones
+      expanded_df$`.show.cooks` <- 1:n %in% order(-expanded_df$.cooksd2)[iid] # index of largest 'id.n' ones
 
     }
   }
@@ -173,7 +176,6 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
 
   if (id.n > 0L) { ## label the largest residuals
     expanded_df$`.labels.id` <- labels.id
-    iid <- 1L:id.n
     expanded_df$`.show.resid` <- 1:n %in% sort.list(abs(expanded_df$`.resid`),
                                                     decreasing = TRUE)[iid]
 
