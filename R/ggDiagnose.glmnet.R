@@ -151,19 +151,19 @@ ggDiagnose.glmnet <- function(x, xvar = c("norm","lambda","dev"), label = FALSE,
            .log.lambda = log(x$lambda),
            .dev = x$dev.ratio,
            .number.non.zero = apply(beta != 0, 2, sum)) %>%
-    reshape2::melt.data.frame(id.vars = c(".norm",
-                                         ".log.lambda",
-                                         ".dev",
-                                         ".number.non.zero")) %>%
+    reshape2::melt(id.vars = c(".norm",
+                               ".log.lambda",
+                               ".dev",
+                               ".number.non.zero")) %>%
     dplyr::rename(beta.value = value)
 
   vis_df_last <- beta[,ncol(beta)] %>% t %>% data.frame %>%
     dplyr::mutate(.norm = apply(abs(beta), 2, sum)[ncol(beta)],
            .log.lambda = log(x$lambda)[ncol(beta)],
            .dev = x$dev.ratio[ncol(beta)]) %>%
-    reshape::melt.data.frame(id.vars = c(".norm",
-                                         ".log.lambda",
-                                         ".dev")) %>%
+    reshape::melt(id.vars = c(".norm",
+                              ".log.lambda",
+                              ".dev")) %>%
     dplyr::rename(beta.value = value) %>%
     dplyr::mutate(variable.num = as.numeric(factor(variable,
                                             levels = rownames(x$beta))))
