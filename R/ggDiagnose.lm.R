@@ -73,7 +73,10 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
               collapse = ""))
   }
 
-
+  if (is.null(labels.id)) {
+    labels.id <- factor(paste(1L:n),
+                        levels = paste(1L:n))
+  }
 
   if (!any(show_plot, return)) {
     return(NULL)
@@ -120,8 +123,6 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
   expanded_df$`.weights` <- w
 
   n <- nrow(expanded_df)
-
-
 
   if (any(show[2L:6L])) {
     s <- if (inherits(x, "rlm")) {
@@ -171,10 +172,6 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
 
 
   if (id.n > 0L) { ## label the largest residuals
-    if (is.null(labels.id)) {
-      labels.id <- factor(paste(1L:n),
-                          levels = paste(1L:n))
-    }
     expanded_df$`.labels.id` <- labels.id
     iid <- 1L:id.n
     expanded_df$`.show.resid` <- 1:n %in% sort.list(abs(expanded_df$`.resid`),
@@ -413,8 +410,7 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
           dplyr::mutate(legend = as.character(legend),
                  group = as.character(group))
 
-        #p <- length(coef(x))
-        #usr <- par("usr")
+        p <- length(coef(x))
 
         hh <- seq.int(min(range_hat[1L], range_hat[2L]/100), range_hat[2L],
                       length.out = 101)
