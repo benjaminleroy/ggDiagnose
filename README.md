@@ -4,6 +4,13 @@ This package tries to fill the space where students get taught to examine diagno
 
 The hope is that introductory `R` coding and data science in `R` classes would start with `ggplot2` based graphics and `tidyverse` based synatax (or at least also include presentation of `tidyverse` tools).
 
+## Installation:
+
+```{r}
+library(devtools)
+devtools::install_github("benjaminleroy/ggDiagnose")
+```
+
 # Philosophy on the package
 
 ## Commentary
@@ -36,3 +43,53 @@ teaching:
 - [ ] 1. In examples for each function provide code to create some / all of the plots in a more basic manner with straight use of `tidyverse`
 
 *Not sure I should work on `ggVis.__` (just `ggplot2` version of plot) for objects that are not models. If the goal is to help starting data scientists / statisticians be able to do everything with `ggplot2` style graphics it probably isn't that helpful/ useful.*
+
+# Examples
+
+### `ggDiagnose.lm` (for an `lm` object.)
+
+```{r}
+lm_object <- lm(Sepal.Length ~., data = iris)
+```
+
+
+The original visualization:
+
+```{r}
+par(mfrow = c(2,3))
+plot(lm_object, which = 1:6)
+```
+
+![](images/base_lm.jpeg)
+
+The updated visualization:
+
+```{r}
+ggDiagnose(lm_object, which = 1:6)
+```
+![](images/ggDiagnose_lm.jpeg)
+
+`ggDiagnose.lm` allows for similar parameter inputs as `plot.lm` but also includes additional ones. This may changes as the package evolves. 
+
+### `ggDiagnose.glmnet`
+
+```{r}
+library(glmnet)
+glmnet_object <- cv.glmnet(y = iris$Sepal.Length, 
+                           x = model.matrix(Sepal.Length~., data = iris))
+```
+
+The original visualization:
+
+```{r}
+plot(glmnet_object)
+```
+
+![](images/base_glmnet.jpeg)
+
+```{r}
+ggDiagnose(glmnet_object)
+```
+
+![](images/ggDiagnose_glmnet.jpeg)
+
