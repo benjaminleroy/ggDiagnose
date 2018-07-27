@@ -12,17 +12,20 @@
 #' of both the data frame used the make the majority of the graphic and
 #' the graphic object itself.
 #' @export
-ggDiagnose <- function(x,show_plot = TRUE, return = FALSE, ...){
+ggDiagnose <- function(x, show_plot = TRUE, return = FALSE, ...){
   type_x <- class(x)
 
   potential_function_names <- paste0("ggDiagnose.",type_x)
-
-  function_exists <- potential_function_names %in% ls(envir = .GlobalEnv)
+  function_exists <- sapply(potential_function_names,
+                            function(func_name){
+                                     exists(func_name,
+                                            where = 'package:ggDiagnose',
+                                            mode = 'function')})
   if (any(function_exists)) {
     function_name <- potential_function_names[function_exists][1]
 
-    return(eval(parse(text = paste0(function_name,"(x,show_plot = ",show_plot,
-                                    "return = ",return,"...)"))))
+    return(eval(parse(text = paste0(function_name,"(x, show_plot = ",show_plot,
+                                    ", return = ",return,", ...)"))))
   } else {
     warning("no ggDiagnose function found for this object")
   }

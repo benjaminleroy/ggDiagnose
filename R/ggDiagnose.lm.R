@@ -127,7 +127,7 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
       x$s
     } else {
       if (isGlm) {
-        sqrt(stats::summary(x)$dispersion)
+        sqrt(base::summary(x)$dispersion)
       }else{
       sqrt(stats::deviance(x)/stats::df.residual(x))
       }
