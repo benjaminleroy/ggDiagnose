@@ -474,7 +474,7 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
     ## Label axis with h_ii values
 
     p <- length(stats::coef(x))
-    bval <- pretty(sqrt(p*expanded_df$.cooksd2/g), 5)
+    bval <- pretty(sqrt(p * expanded_df$.cooksd2 / expanded_df$`.logit_hii`), 5)
 
     xmax <- xlim[2]
     ymax <- ylim[2]
@@ -484,7 +484,7 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
         xi <- xmax - graphics::strwidth(" ",units = "figure")/3
         yi <- bi2*xi
         ggout_list$`cooks_vs_logit_leverage` <-
-          ggplot2::ggout_list$`cooks_vs_logit_leverage` +
+          ggout_list$`cooks_vs_logit_leverage` +
           ggplot2::geom_abline(intercept = 0,slope =  bi2, linetype = 2,
                       color = dashed_color[6L]) +
           ggplot2::geom_text(data = data.frame(x = xi, y = yi,
