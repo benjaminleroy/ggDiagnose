@@ -60,7 +60,6 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
 
   # rewrite with a mutate for all desired added elements, check augment with glms and rlm
 
-  print(id.n)
   # pkg requirements (for this function)
   missing_packages <- look_for_missing_packages(c("broom",
                                                   "stats",
@@ -122,6 +121,15 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
 
   n <- nrow(expanded_df)
 
+  if (is.null(id.n)) {
+    id.n <- 0
+  } else {
+    id.n <- as.integer(id.n)
+    if (id.n < 0L || id.n > n) {
+      stop(base::gettextf("'id.n' must be in {1,..,%d}", n), domain = NA)
+    }
+  }
+
   if (any(show[2L:6L])) {
     s <- if (inherits(x, "rlm")) {
       x$s
@@ -139,7 +147,7 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
         } else {
           stats::cooks.distance(x, sd = s, res = expanded_df$`.resid`)
         }
-      iid <-
+
       expanded_df$`.show.cooks` <- 1:n %in% order(-expanded_df$`.cooksd2`)[iid]# index of largest 'id.n' ones
 
     }
@@ -167,14 +175,7 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
   if (any(show[c(1L, 3L)])) {
     l.fit <- ifelse(isGlm, "Predicted values", "Fitted values")
   }
-  if (is.null(id.n)) {
-    id.n <- 0
-  } else {
-    id.n <- as.integer(id.n)
-    if (id.n < 0L || id.n > n) {
-      stop(base::gettextf("'id.n' must be in {1,..,%d}", n), domain = NA)
-    }
-  }
+
 
   if (id.n > 0L) { ## label the largest residuals
     if (is.null(labels.id)) {
