@@ -80,7 +80,7 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
     return(NULL)
   }
 
-  if (!is.null(x$family) & x$family[[1]] %in% c("binomial", "quasibinomial")) {
+  if (!is.null(x$family) & any(x$family[[1]] %in% c("binomial", "quasibinomial"))) {
     warning("binomial glm are not well diagnosted with these plots.")
   }
 
