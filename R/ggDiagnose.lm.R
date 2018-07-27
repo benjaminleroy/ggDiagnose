@@ -60,7 +60,7 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
 
   # rewrite with a mutate for all desired added elements, check augment with glms and rlm
 
-
+  print(id.n)
   # pkg requirements (for this function)
   missing_packages <- look_for_missing_packages(c("broom",
                                                   "stats",
@@ -139,6 +139,7 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
         } else {
           stats::cooks.distance(x, sd = s, res = expanded_df$`.resid`)
         }
+      iid <-
       expanded_df$`.show.cooks` <- 1:n %in% order(-expanded_df$`.cooksd2`)[iid]# index of largest 'id.n' ones
 
     }
