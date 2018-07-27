@@ -96,7 +96,7 @@ ggDiagnose.cv.glmnet <- function(x, sign.lambda = 1, color = "red",
                                     name = "# non-zero coefficients"))
 
   if (show_plot) {
-    ggplot2::ggplot_build(ggout)
+    print(ggout)
   }
   if (return) {
     return(list(data = expanded_df, ggout = ggout))
@@ -219,10 +219,10 @@ ggDiagnose.glmnet <- function(x, xvar = c("norm","lambda","dev"), label = FALSE,
                                                  name = "# non-zero coefficients"))
 
   if (show_plot) {
-    ggplot2::ggplot_build(ggout)
+    print(ggout)
   }
   if (return) {
-    return(list(data = expanded_df, ggout = ggout))
+    return(list(data = vis_df, ggout = ggout))
   }
   }
 
