@@ -93,3 +93,24 @@ ggDiagnose(glmnet_object)
 
 ![](images/ggDiagnose_glmnet.jpeg)
 
+### `ggDiagnose.cv.glmnet`
+
+```{r}
+cv_glmnet_object <- cv.glmnet(y = iris$Sepal.Length, 
+                              x = model.matrix(Sepal.Length~., data = iris))
+```
+
+The original visualization:
+
+```{r}
+plot(cv_glmnet_object)
+```
+
+![](images/base_cv_glmnet.jpeg)
+
+```{r}
+ggDiagnose(ggDiagnose.cv.glmnet(x))
+```
+
+![](images/ggDiagnose_cv_glmnet.jpeg)
+
