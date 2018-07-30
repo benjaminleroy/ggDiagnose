@@ -10,7 +10,7 @@
 #' This function can deal with \code{\link[stats]{lm}} and
 #' \code{\link[stats]{glm}} objects.
 #'
-#' @param x lm or glm object
+#' @param x \code{lm} or \code{glm} object
 #' @param which which plots you'd like to create
 #' @param caption title per plot
 #' @param sub.caption caption for bottom of multiple plot visual (defaults
@@ -37,6 +37,11 @@
 #' of both the data frame used the make the majority of the graphic and
 #' a list of each individual graphic.
 #' @export
+#'
+#' @example
+#' lm_object <- lm(Sepal.Length ~., data = iris)
+#' ggDiagnose.lm(lm_object, which = 1:6)
+#' plot(lm_object, which = 1:6)
 ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
                           caption = list("Residuals vs Fitted", "Normal Q-Q",
                                          "Scale-Location", "Cook's distance",
@@ -61,8 +66,7 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
   # rewrite with a mutate for all desired added elements, check augment with glms and rlm
 
   # pkg requirements (for this function)
-  missing_packages <- look_for_missing_packages(c("broom",
-                                                  "stats",
+  missing_packages <- look_for_missing_packages(c("stats",
                                                   "grDevices",
                                                   "graphics"))
   # ^also requires ggplot2, base, dyplr, gridExtra
@@ -73,11 +77,6 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
               collapse = ""))
   }
 
-  if (is.null(labels.id)) {
-    labels.id <- factor(paste(1L:n),
-                        levels = paste(1L:n))
-  }
-
   if (!any(show_plot, return)) {
     return(NULL)
   }
@@ -86,18 +85,8 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
     warning("binomial glm are not well diagnosted with these plots.")
   }
 
-  dropInf <- function(x, h) {
-    if (any(isInf <- h >= 1.0)) {
-      warning(gettextf("not plotting observations with leverage one:\n  %s",
-                       paste(which(isInf), collapse = ", ")),
-              call. = FALSE, domain = NA)
-      x[isInf] <- NaN
-    }
-    x
-  }
-
   if (!inherits(x, "lm")) {
-    stop("use only with \"lm\" objects")
+    stop("use only with \"lm\" objects") # glm, rlm objects also inherit this
   }
 
   if (!is.numeric(which) || any(which < 1) || any(which > 6)) {
@@ -108,66 +97,25 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
   show <- rep(FALSE, 6)
   show[which] <- TRUE
 
-  expanded_df <- broom::augment(x) %>%
-    mutate(`.yhat` = predict(x)) # != fitted() for glm
+  n <- nrow(x$model)
 
-  w <- stats::weights(x)
-  if (!is.null(w)) { # drop obs with zero wt: PR#6640
-    wind <- w != 0
-    expanded_df <- expanded_df[wind,]
-    labels.id <- labels.id[wind]
-  } else{
-    w <- 1
+  if (is.null(labels.id)) {
+    labels.id <- factor(paste(1L:n),
+                        levels = paste(1L:n))
   }
 
-  expanded_df$`.weights` <- w
-
-  n <- nrow(expanded_df)
-
-  if (id.n > 0L) { ## label the largest residuals
-    iid <- 1L:id.n
-  }
-
-  if (any(show[2L:6L])) {
-    s <- if (inherits(x, "rlm")) {
-      x$s
-    } else {
-      if (isGlm) {
-        sqrt(base::summary(x)$dispersion)
-      }else{
-      sqrt(stats::deviance(x)/stats::df.residual(x))
-      }
-    }
-    expanded_df$`.hii` <- stats::lm.influence(x, do.coef = FALSE)$hat
-    if (any(show[4L:6L])) {
-      expanded_df$`.cooksd2` <- if (isGlm) {
-          stats::cooks.distance(x)
-        } else {
-          stats::cooks.distance(x, sd = s, res = expanded_df$`.resid`)
-        }
-      expanded_df$`.show.cooks` <- 1:n %in% order(-expanded_df$.cooksd2)[iid] # index of largest 'id.n' ones
-
-    }
-  }
+  expanded_df <- augment.lm(x, labels.id = labels.id) %>% filter(.weights != 0)
 
   if (any(show[2L:3L])) {
     ylab23 <- ifelse(isGlm,
                      "Std. deviance resid.",
                      "Standardized residuals")
-    expanded_df$`.r.w` <- if (is.null(w)) {
-      expanded_df$`.resid`
-      } else {
-        sqrt(expanded_df$`.weights`) * expanded_df$`.resid`
-      }
-    ## NB: rs is already NaN if r=0, hii=1
-    expanded_df$`.std.resid2` <- dropInf(expanded_df$`.r.w`/(s * sqrt(1 - expanded_df$`.hii`)),
-                                         expanded_df$`.hii` )
   }
 
   if (any(show[5L:6L])) { # using 'leverages'
-    range_hat <- range(expanded_df$`.hii`, na.rm = TRUE) # though should never have NA
+    range_hat <- range(expanded_df$.leverage, na.rm = TRUE) # though should never have NA
     isConst.hat <- all(range_hat == 0) ||
-      diff(range_hat) < 1e-10 * mean(expanded_df$`.hii`, na.rm = TRUE)
+      diff(range_hat) < 1e-10 * mean(expanded_df$.leverage, na.rm = TRUE)
   }
   if (any(show[c(1L, 3L)])) {
     l.fit <- ifelse(isGlm, "Predicted values", "Fitted values")
@@ -175,28 +123,15 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
 
 
   if (id.n > 0L) { ## label the largest residuals
-    expanded_df$`.labels.id` <- labels.id
-    expanded_df$`.show.resid` <- 1:n %in% sort.list(abs(expanded_df$`.resid`),
-                                                    decreasing = TRUE)[iid]
-
-    if (any(show[2L:3L])) {
-      expanded_df$`.show.std.resid` <- 1:n %in% sort.list(abs(expanded_df$`.std.resid2`),
-                                                          decreasing = TRUE)[iid]
-    }
-
-    if (any(show[4L:6L])) {
-      expanded_df$`.show.cooks` <- 1:n %in% order(-expanded_df$`.cooksd2`)[iid]# index of largest 'id.n' ones
-    }
     # ATTN: needs to be updated: (need to focus on adj.x and label.pos, etc)
-    text.id <- function(df, x_string, y_string, ind_string,
+    text.id <- function(df, x_string, y_string, ind_string, id.n,
                         ggbase = ggplot2::ggplot()) {
-      df_inner <- df[df[,ind_string],]
+      df_inner <- df[df[,ind_string] <= id.n,]
       ggout <- ggbase +
         ggplot2::geom_text(data = df_inner,
-                           ggplot2::aes_string(
-                             x = x_string,
-                             y = y_string,
-                             label = ".labels.id"))
+                           ggplot2::aes_string(x = x_string,
+                                               y = y_string,
+                                               label = ".labels.id"))
       return(ggout)
     }
   }
@@ -223,7 +158,7 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
   ggout_list <- list()
   ##---------- Do the individual plots : ----------
   if (show[1L]) {
-    ggout_list$`residual_vs_yhat` <-
+    ggout_list$residual_vs_yhat <-
       ggplot2::ggplot(expanded_df,
                      ggplot2::aes(x = `.yhat`,
                          y = `.resid`)) +
@@ -235,17 +170,18 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
       ggplot2::geom_smooth(se = F, color = "blue")
     #ATTN: probably need to come back for the title & captions, etc
     if (id.n > 0) {
-      ggout_list$`residual_vs_yhat` <- text.id(df = expanded_df,
+      ggout_list$residual_vs_yhat <- text.id(df = expanded_df,
                                                x_string = ".yhat",
                                                y_string = ".resid",
-                                               ind_string = ".show.resid",
-                                               ggbase = ggout_list$`residual_vs_yhat`)
+                                               ind_string = ".ordering.resid",
+                                               id.n = id.n,
+                                               ggbase = ggout_list$residual_vs_yhat)
 
     }
   }
   if (show[2L]) { ## Normal QQ
-    ggout_list$`qqnorm` <- ggplot2::ggplot(expanded_df) +
-      ggplot2::geom_qq(ggplot2::aes(sample = `.std.resid2`),
+    ggout_list$qqnorm <- ggplot2::ggplot(expanded_df) +
+      ggplot2::geom_qq(ggplot2::aes(sample = .std.resid),
                        distribution = stats::qnorm,
                        shape = shape) +
       ggplot2::labs(title = getCaption(2),
@@ -253,75 +189,71 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
            x = "Theoretical Quantiles")
 
     if (qqline) {
-      ggout_list$`qqnorm` <- ggout_list$`qqnorm` +
-        ggplot2::geom_qq_line(ggplot2::aes(sample = `.std.resid2`),
+      ggout_list$qqnorm <- ggout_list$qqnorm +
+        ggplot2::geom_qq_line(ggplot2::aes(sample = .std.resid),
                      distribution = stats::qnorm,
                      linetype = 2, col = dashed_color[2L])
     }
     if (id.n > 0) {
-      qq <- stats::qqnorm(expanded_df$`.std.resid2`,plot.it = FALSE) %>%
+      qq <- stats::qqnorm(expanded_df$.std.resid,plot.it = FALSE) %>%
         data.frame() %>%
-        mutate(`.show.std.resid` = expanded_df$`.show.std.resid`,
-               `.labels.id` = expanded_df$`.labels.id`)
+        mutate(.ordering.resid = expanded_df$.ordering.resid,
+               .labels.id = expanded_df$.labels.id)
 
-      ggout_list$`qqnorm` <- text.id(df = qq,
+      ggout_list$qqnorm <- text.id(df = qq,
               x_string = "x",
               y_string = "y",
-              ind_string = ".show.std.resid",
-              ggbase =  ggout_list$`qqnorm`)
+              id.n = id.n,
+              ind_string = ".ordering.resid",
+              ggbase =  ggout_list$qqnorm)
     }
   }
   if (show[3L]) {
-    expanded_df$`.sqrt.abs.resid` <- sqrt(abs(expanded_df$`.std.resid2`))
     yl <- as.expression(substitute(sqrt(abs(YL)), list(YL = as.name(ylab23))))
 
-    ggout_list$`sqrt_abs_resid` <-
+    ggout_list$sqrt_abs_resid <-
       ggplot2::ggplot(expanded_df,
-             ggplot2::aes(x = `.yhat`,
-                 y = `.sqrt.abs.resid`)) +
+             ggplot2::aes(x = .yhat,
+                 y = .sqrt.abs.resid)) +
       ggplot2::geom_point(shape = shape) +
       ggplot2::labs(x = l.fit,
            y = yl,
            title = getCaption(3)) +
       ggplot2::geom_smooth(se = FALSE, color = "blue")
     if (id.n > 0) {
-      ggout_list$`sqrt_abs_resid` <- text.id(df = expanded_df,
+      ggout_list$sqrt_abs_resid <- text.id(df = expanded_df,
                                              x_string = ".yhat",
                                              y_string = ".sqrt.abs.resid",
-                                             ind_string = ".show.std.resid",
-                                             ggbase = ggout_list$`sqrt_abs_resid`)
+                                             ind_string = ".ordering.std.resid",
+                                             id.n = id.n,
+                                             ggbase = ggout_list$sqrt_abs_resid)
     }
 
 
   }
   if (show[4L]) { ## Cook's Distances
-    ggout_list$`cooks` <- ggplot2::ggplot(expanded_df,
-                                 aes(y = `.cooksd2`,
-                                     x = `.labels.id`)) +
-      ggplot2::geom_segment(aes(x = `.labels.id`,
-                       xend = `.labels.id`,
-                       y = 0,
-                       yend = `.cooksd2`)) +
+    ggout_list$cooks <- ggplot2::ggplot(expanded_df,
+                                        aes(y = .cooksd,
+                                            x = .index)) +
+      ggplot2::geom_segment(aes(x = .index,
+                                xend = .index,
+                                y = 0,
+                                yend = .cooksd)) +
       ggplot2::theme(axis.text.x = element_text(angle = 90)) +
-      ggplot2::labs(x = "Observation Name/ Number",
-           y = "Cook's distance",
-           title = getCaption(4))
+      ggplot2::labs(x = "Observation Number",
+                    y = "Cook's distance",
+                    title = getCaption(4))
     if (id.n > 0) {
-      ggout_list$`cooks` <- text.id(df = expanded_df,
-                                    x_string = ".labels.id",
-                                    y_string = ".cooksd2",
-                                    ind_string = ".show.cooks",
-                                    ggbase =  ggout_list$`cooks`)
+      ggout_list$cooks <- text.id(df = expanded_df,
+                                  x_string = ".index",
+                                  y_string = ".cooksd",
+                                  ind_string = ".ordering.cooks",
+                                  id.n = id.n,
+                                  ggbase =  ggout_list$cooks)
     }
   }
-
   if (show[5L]) {
     ylab5 <- ifelse(isGlm, "Std. Pearson resid.", "Standardized residuals")
-    expanded_df$`.pearson.resid` <- stats::residuals(x, "pearson")
-    expanded_df$`.std.pearson.resid` <- dropInf( expanded_df$`.pearson.resid` /
-                                                   (s * sqrt(1 -
-                                                        expanded_df$`.hii`)),
-                                                 expanded_df$`.hii` )
 
     if (isConst.hat) { ## leverages are all the same
       if (missing(caption)) { # set different default
@@ -347,31 +279,33 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
 
         data_vis <-
           data.frame(.facval = facval,
-                     .std.pearson.resid = expanded_df$`.std.pearson.resid`,
-                     .show.cooks = expanded_df$`.show.cooks`,
-                     .labels.id = expanded_df$`.labels.id`)
+                     .std.pearson.resid = expanded_df$.std.pearson.resid,
+                     .show.cooks = expanded_df$.ordering.cooks,
+                     .labels.id = expanded_df$.labels.id)
 
-        ggout_list$`residual_vs_leverage` <- ggplot2::ggplot(data_vis,
-                                        ggplot2::aes(x = `.facval`,
-                                            y = `.std.pearson.resid`)) +
+        ggout_list$residual_vs_leverage <- ggplot2::ggplot(data_vis,
+                                                      ggplot2::aes(x = .facval,
+                                                      y = .std.pearson.resid)) +
           ggplot2::geom_point(shape = shape) +
           ggplot2::geom_vline(data = data.frame(v = ff[1L]*(0:nlev[1L]) - 1/2),
-                     ggplot2::aes(xintercept = v), color = dashed_color[5],
-                     linetype = "F4") +
+                              ggplot2::aes(xintercept = v),
+                              color = dashed_color[5],
+                              linetype = "F4") +
           ggplot2::scale_x_continuous(breaks = ff[1L]*(1L:nlev[1L] - 1/2) - 1/2,
-                             labels = x$xlevels[[1L]]) +
+                                      labels = x$xlevels[[1L]]) +
           ggplot2::labs(x = paste0("Factor Level Combinations\n(Major: ",
-                          facvars[1L],")")) +
+                                   facvars[1L],")")) +
           ggplot2::geom_hline(yintercept = 0, lty = 2,
                               color = dashed_color[5]) +
           ggplot2::geom_smooth(se = FALSE, color = "blue")
 
         if (id.n > 0) {
-          ggout_list$`residual_vs_leverage` <- text.id(df = data_vis,
+          ggout_list$residual_vs_leverage <- text.id(df = data_vis,
                                         x_string = ".facval",
                                         y_string = ".std.pearson.resid",
-                                        ind_string = ".show.cooks",
-                                        ggbase =  ggout_list$`residual_vs_leverage`)
+                                        ind_string = ".ordering.cooks",
+                                        id.n = id.n,
+                                        ggbase =  ggout_list$residual_vs_leverage)
         }
       } else {# no factors
         message(gettextf("hat values (leverages) are all = %s\n and there are no factor predictors; no plot no. 5",
@@ -381,14 +315,12 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
 
     } else {## Residual vs Leverage
       ## omit hatvalues of 1.
-      expanded_df$`.show.leverage` <- expanded_df$`.hii` < 1
+      ylim <- range(expanded_df[expanded_df$.non.extreme.leverage,".std.pearson.resid"])
+      xlim <- range(expanded_df[expanded_df$.non.extreme.leverage,".leverage"])
 
-      ylim <- range(expanded_df[expanded_df$`.show.leverage`,".std.pearson.resid"])
-      xlim <- range(expanded_df[expanded_df$`.show.leverage`,".hii"])
-
-      ggout_list$`residual_vs_leverage` <- ggplot2::ggplot(expanded_df[expanded_df$`.show.leverage`,],
-                                      ggplot2::aes(x = `.hii`,
-                                          y = `.std.pearson.resid`)) +
+      ggout_list$residual_vs_leverage <- ggplot2::ggplot(expanded_df[expanded_df$.non.extreme.leverage,],
+                                      ggplot2::aes(x = .leverage,
+                                          y = .std.pearson.resid)) +
         ggplot2::geom_point(shape = shape) +
         ggplot2::geom_vline(xintercept = 0, linetype = 2,
                             color = dashed_color[5L]) +
@@ -399,14 +331,8 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
              y = ylab5,
              title = getCaption(5))
 
-      # plot(xx, rsp, xlim = c(0, max(xx, na.rm = TRUE)),
-      #      main = main, xlab = "Leverage", ylab = ylab5, type = "n")
-      # panel(xx, rsp)#, ...)
-      # abline(h = 0, v = 0, lty = 3, col = "gray")
-      #
-
       if (length(cook.levels)) {
-        data_cooks <- data.frame(`.hii` = -1,
+        data_cooks <- data.frame(`.leverage` = -1,
                                  `.std.pearson.resid` = 0,
                                  legend = "blank", group = "blank") %>%
           dplyr::mutate(legend = as.character(legend),
@@ -421,7 +347,7 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
           cl.h <- sqrt(crit * p * (1 - hh) / hh)
 
           data_cooks <- rbind(data_cooks,
-                              data.frame(`.hii` = rep(hh, times = 2),
+                              data.frame(`.leverage` = rep(hh, times = 2),
                                          `.std.pearson.resid` = c(cl.h, -cl.h),
                                          legend = "Cook's distance",
                                          group = c(rep(paste0(crit,"_upper"), length(hh)),
@@ -431,52 +357,52 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
         }
         data_cooks <- data_cooks[-1,]
 
-        ggout_list$`residual_vs_leverage` <- ggout_list$`residual_vs_leverage` +
+        ggout_list$residual_vs_leverage <- ggout_list$residual_vs_leverage +
           ggplot2::geom_path(data = data_cooks,
-                    ggplot2::aes(x = `.hii`,
-                        y = `.std.pearson.resid`,
+                    ggplot2::aes(x = .leverage,
+                        y = .std.pearson.resid,
                         group = group),
                     color = dashed_color[5L], linetype = 2) +
           ggplot2::xlim(c(0,xlim[2])) +
           ggplot2::ylim(ylim)
       }
       #print(expanded_df$.show.leverage)
-      ggout_list$`residual_vs_leverage` <- text.id(df = expanded_df[expanded_df$`.show.leverage`,],
-              x_string = ".hii",
+      if (id.n > 0) {
+      ggout_list$residual_vs_leverage <- text.id(df = expanded_df[expanded_df$.non.extreme.leverage,],
+              x_string = ".leverage",
               y_string = ".std.pearson.resid",
-              ind_string = ".show.cooks",
-              ggbase =  ggout_list$`residual_vs_leverage`)
+              ind_string = ".ordering.cooks",
+              id.n = id.n,
+              ggbase =  ggout_list$residual_vs_leverage)
+      }
 
     }
   }
-
   if (show[6L]) {
 
-    expanded_df$`.logit_hii` <- dropInf(expanded_df$.hii/(1 - expanded_df$.hii),
-                                        expanded_df$.hii )
+    ylim <- c(0, max(expanded_df$.cooksd))
+    xlim <- c(0, max(expanded_df$.logit.leverage))
 
-    ylim <- c(0, max(expanded_df$`.cooksd2`))
-    xlim <- c(0, max(expanded_df$`.logit_hii`))
+    athat <- pretty(expanded_df$.leverage)
 
-    athat <- pretty(expanded_df$.hii)
-
-    ggout_list$`cooks_vs_logit_leverage` <-
+    ggout_list$cooks_vs_logit_leverage <-
       ggplot2::ggplot(expanded_df,
-                      ggplot2::aes(x = `.logit_hii`,
-                 y = `.cooksd2`)) +
+                      ggplot2::aes(x = .logit.leverage,
+                                   y = .cooksd)) +
       ggplot2::geom_point(shape = shape) +
       ggplot2::geom_smooth(se = FALSE) +
       ggplot2::ylim(ylim) + #xlim(xlim) +
       ggplot2::labs(y = "Cook's distance",
-           x =  expression("Leverage  " * h[ii]),
-           title = getCaption(6)) +
+                    x =  expression("Leverage  " * h[ii]),
+                    title = getCaption(6)) +
       ggplot2::scale_x_continuous(limits = xlim,
-                         breaks = athat,
-                         labels = paste(athat))
+                                  breaks = athat,
+                                  labels = paste(athat))
     ## Label axis with h_ii values
 
     p <- length(stats::coef(x))
-    bval <- pretty(sqrt(p * expanded_df$.cooksd2 / expanded_df$`.logit_hii`), 5)
+    bval <- pretty(sqrt(p * expanded_df$.cooksd /
+                          expanded_df$.logit.leverage), 5)
 
     xmax <- xlim[2]
     ymax <- ylim[2]
@@ -485,38 +411,39 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
       if (ymax > bi2*xmax) {
         xi <- xmax - graphics::strwidth(" ",units = "figure")/3
         yi <- bi2*xi
-        ggout_list$`cooks_vs_logit_leverage` <-
-          ggout_list$`cooks_vs_logit_leverage` +
+        ggout_list$cooks_vs_logit_leverage <-
+          ggout_list$cooks_vs_logit_leverage +
           ggplot2::geom_abline(intercept = 0,slope =  bi2, linetype = 2,
-                      color = dashed_color[6L]) +
-          ggplot2::geom_text(data = data.frame(x = xi, y = yi,
-                                      label = paste(bval[i])),
-                             ggplot2::aes(x = x, y = y, label = label),size = 4,
-                    color = dashed_color[6L])
+                               color = dashed_color[6L]) +
+          ggplot2::geom_label(data = data.frame(x = xi, y = yi,
+                                                label = paste(bval[i])),
+                              ggplot2::aes(x = x, y = y, label = label),
+                              size = 4, color = dashed_color[6L])
       } else {
-        yi <- ymax - 1.5*graphics::strheight(" ", units = "figure")
+        yi <- ymax - graphics::strheight(" ", units = "figure")/5
         xi <- yi/bi2
         slope <- yi/xi
-        ggout_list$`cooks_vs_logit_leverage` <-
-          ggout_list$`cooks_vs_logit_leverage` +
+        ggout_list$cooks_vs_logit_leverage <-
+          ggout_list$cooks_vs_logit_leverage +
           ggplot2::geom_abline(intercept = 0,slope =  slope, linetype = 2,
-                      color = dashed_color[6L]) +
-          ggplot2::geom_text(data = data.frame(x = xi,
-                                      y = ymax - 0.5*graphics::strheight(" ",
+                               color = dashed_color[6L]) +
+          ggplot2::geom_label(data = data.frame(x = xi,
+                                                y = ymax - 0.5*graphics::strheight(" ",
                                                                          units = "figure"),
-                                      label = paste(bval[i])),
-                             ggplot2::aes(x = x, y = y, label = label),size = 4,
-                    color = dashed_color[6L])
+                                                label = paste(bval[i])),
+                             ggplot2::aes(x = x, y = y, label = label),
+                             size = 4, color = dashed_color[6L])
       }
     }
 
 
     if (id.n > 0) {
-      ggout_list$`cooks_vs_logit_leverage` <- text.id(df = expanded_df,
-                                                      x_string = ".logit_hii",
-                                                      y_string = ".cooksd2",
-                                                      ind_string = ".show.cooks",
-                                                      ggbase = ggout_list$`cooks_vs_logit_leverage`)
+      ggout_list$cooks_vs_logit_leverage <- text.id(df = expanded_df,
+                                                    x_string = ".logit.leverage",
+                                                    y_string = ".cooksd",
+                                                    ind_string = ".ordering.cooks",
+                                                    id.n = id.n,
+                                                    ggbase = ggout_list$cooks_vs_logit_leverage)
     }
   }
 
@@ -535,9 +462,7 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
   ## "how to do it yourself" <- maybe with the data.frame that we create instead?
   ##
   ## that is to say- I'm not sure if we should show example code
-  ## of how to do the most basic thing or not... (I guess it would be best to rewrite the code with
-  ## just 1 or 2 mutates and clean up the code to make this work better)
-  #
+
   # x <- lm(Sepal.Length ~., data = iris)
   #
   # df <- broom::augment(x)
@@ -575,3 +500,165 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
 #
 #
 # ggDiagnose.lm(lm(Sepal.Width ~ ., data = iris))
+
+
+#' Creates an augmented data frame for lm and glm objects (for \pkg{ggplot2}
+#' visuals)
+#'
+#' Similar to a extended version of \code{\link[broom]{broom::augment}} for \code{lm}
+#' and \code{glm} objects but with prepared for the diagnostic plots.
+#'
+#' @param x \code{lm} or \code{glm} object
+#' @param labels.id labels for all observations
+#'
+#' @return augmented data.frame, see \code{details} for more information
+#'
+#' @details
+#' \itemize{
+#'   \item{original data frame}{original data frame used to create lm or glm
+#'   object}
+#'   \item{.index}{row number 1 to \code{nrow(original data)}}
+#'   \item{.labels.id}{provides labels or strings with same names as
+#'   \code{.index}}
+#'   \item{.weights}{weights from the model for each observation}
+#'   \item{.yhat}{predicted values in \code{y} terms
+#'   (not probablities, logit probabilities, log transformed, etc), as such,
+#'   for glm this is different then \code{fitted(x)}}
+#'   \item{.resid}{residuals between \code{.yhat} and \code{y}}
+#'   \item{.leverage}{leverage for each observation, corresponds to the
+#'   $diag(XX^T)$ NOTE: GIVE BETTER DESCRIPTION}
+#'   \item{.cooksd}{Cook's Distance, if \code{lm}, then we use the estimated
+#'   standard deviation to calculate the value }
+#'   \item{.weighted.resid}{residuals weighted by the \code{.weights}, (i.e.
+#'   $\sqrt{\code{.weights}} \cdot \code{.resid}$)}
+#'   \item{.std.resid}{the standardized residuals using weighted.residuals
+#'   and scaled by leverage and the estimated standard deviation, (i.e.
+#'   $\frac{\code{.weighted.resid}}{std.deviation \cdot (1 - \code{.leverage})}
+#'   )$}
+#'   \item{.sqrt.abs.resid}{the square-root of the absolute value of the
+#'   standardized residuals}
+#'   \item{.pearson.resid}{pearson residuals, residuals weighted using the
+#'   pearson formula NOTE: GIVE BETTER DESCRIPTION}
+#'   \item{.std.pearson.resid}{standardized pearson residuals, (i.e.
+#'   $\frac{\code{.pearson.resid}}{std.deviation \cdot (1- \code{.leverage})})}
+#'   \item{.logit.leverage}{logit (i.e. $log(\frac{x}{1-x})$) of the leverage}
+#'   \item{.ordering.resid}{Index ordering of residuals (in absolute value)}
+#'   \item{.ordering.std.resid}{Index ordering of above standardized residuals
+#'   (in absolute value)}
+#'   \item{.ordering.cooks}{Index ordering of largest cook's distance}
+#'   \item{.non.extreme.leverage}{logical vector if leverage != 1}
+#'   }
+#' @export
+#'
+#' @examples
+#' lm_object <- lm(Sepal.Length ~., data = iris)
+#' augment.lm(lm_object)
+augment.lm <- function(x, labels.id = factor(names(residuals(x)),
+                                             levels = names(residuals(x)))) {
+
+  # pkg requirements (for this function)
+  missing_packages <- look_for_missing_packages(c("stats"))
+  # ^also requires base, dyplr
+
+  if (length(missing_packages) > 0) {
+    stop(paste0(c("Package(s) '",paste0(missing_packages, collapse = "', '"),
+                  "' needed for this function to work. Please install them/it."),
+                collapse = ""))
+  }
+
+
+  isGlm <- inherits(x, "glm")
+
+  dropInf <- function(x, h) {
+    if (any(isInf <- h >= 1.0)) {
+      warning(gettextf("not plotting observations with leverage one:\n  %s",
+                       paste(which(isInf), collapse = ", ")),
+              call. = FALSE, domain = NA)
+      x[isInf] <- NaN
+    }
+    x
+  }
+
+  # standard deviation
+  s <- if (inherits(x, "rlm")) {
+    x$s
+  } else {
+    if (isGlm) {
+      sqrt(base::summary(x)$dispersion)
+    }else{
+      sqrt(stats::deviance(x)/stats::df.residual(x))
+    }
+  }
+
+  output_df <- data.frame(x$model) %>%
+    dplyr::mutate(.index = 1:nrow(x$model),
+                  .labels.id = labels.id,
+                  .weights = if (is.null(stats::weights(x))) {
+                      1
+                    } else {
+                      stats::weights(x)
+                    },
+                  .yhat = predict(x), #!= fitted() for glm
+                  .resid = stats::residuals(x),
+                  .leverage = stats::lm.influence(x, do.coef = FALSE)$hat,
+                  .pearson.resid = stats::residuals(x, "pearson")
+    )
+
+  output_df <- output_df %>%
+    dplyr::mutate(.cooksd = if (isGlm) {
+                              stats::cooks.distance(x)
+                            } else {
+                              stats::cooks.distance(x, sd = s,
+                                                    res = output_df$.resid)
+                            # note it isn't the same as basic
+                            # cooks.distance(x)
+                            },
+                  .weighted.resid = sqrt(.weights) * .resid,
+                  .std.pearson.resid = dropInf(output_df$.pearson.resid /
+                                          (s * sqrt(1 - output_df$.leverage)),
+                                          output_df$.leverage),
+                  .logit.leverage = dropInf(expanded_df$.leverage /
+                                              (1 - expanded_df$.leverage),
+                                              expanded_df$.leverage)
+    )
+
+  output_df <- output_df %>%
+    dplyr::mutate(.std.resid = dropInf(
+                output_df$.weighted.resid/(s * sqrt(1 - output_df$.leverage)),
+                output_df$.leverage),
+                  .non.extreme.leverage = .leverage < 1)
+
+  output_df <- output_df %>%
+    dplyr::mutate(.sqrt.abs.resid = sqrt(abs(.std.resid)))
+
+  n <- nrow(output_df)
+
+  output_df$.ordering.cooks <- n
+  output_df$.ordering.resid <- n
+  output_df$.ordering.std.resid <- n
+
+  output_df$.ordering.cooks[order(output_df$.cooksd, decreasing = TRUE)] <- 1:n
+  output_df$.ordering.resid[order(abs(output_df$.resid),
+                                  decreasing = TRUE)] <- 1:n
+  output_df$.ordering.std.resid[order(abs(output_df$.std.resid),
+                                      decreasing = TRUE)] <- 1:n
+
+  # just prioritizing columns
+  output_df <- output_df[,c(names(x$model),
+                            ".index", ".labels.id",
+                            ".weights",
+                            ".yhat", ".resid", ".leverage", ".cooksd",
+                            ".weighted.resid", ".std.resid", ".sqrt.abs.resid",
+                            ".pearson.resid", ".std.pearson.resid",
+                            ".logit.leverage",
+                            ".ordering.resid", ".ordering.std.resid",
+                            ".ordering.cooks",
+                            ".non.extreme.leverage")]
+
+  return(output_df)
+
+
+}
+
+# x <- lm(Sepal.Length ~., data = iris)
+# broom::augment(x) %>% names
