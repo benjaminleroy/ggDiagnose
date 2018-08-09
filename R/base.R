@@ -41,10 +41,10 @@ ggDiagnose <- function(x, show_plot = TRUE, return = FALSE, ...){
 #'
 #' @return data frame with ready to visualize
 #' @export
-augment <- function(x, ...){
+dfCompile <- function(x, ...){
   type_x <- class(x)
 
-  potential_function_names <- paste0("augment.",type_x)
+  potential_function_names <- paste0("dfCompile.",type_x)
   function_exists <- sapply(potential_function_names,
                             function(func_name){
                               exists(func_name,
@@ -56,7 +56,7 @@ augment <- function(x, ...){
     return(eval(parse(text = paste0(function_name,"(x, show_plot = ",show_plot,
                                     ", return = ",return,", ...)"))))
   } else {
-    warning("no augment function found for this object")
+    warning("no dfCompile function found for this object")
   }
 
 }

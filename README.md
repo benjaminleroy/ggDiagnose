@@ -1,8 +1,24 @@
 # ggDiagnose
 
-This package tries to fill the space where students get taught to examine diagnostics with visuals built in base `R` (the examples that come to mind are `plot.lm`, `plot.gam`, etc), and instead proposes `ggDiagnose` to do the same thing, allowing students to pull out graphics from the standard diagnostic plots to update / use on their own, which is easy to do with the grammar of graphics paradigm with `ggplot2 ` graphics.
+## Philosophy and Purpose
 
-The hope is that introductory `R` coding and data science in `R` classes would start with `ggplot2` based graphics and `tidyverse` based synatax (or at least also include presentation of `tidyverse` tools).
+This package started with the idea that one should be able to quickly be able to create `ggplot` based graphics for diagnostics of basic models similar to that of the base `plot` functionality (like `plot.lm`, `plot.gam`, etc). But it's purpose quickly expanded into a tool for data scientists to quickly make pretty `ggplot` diagnostic graphics combined with providing students and data scientists the data frames to create modifications of the graphics and more. 
+
+We hope that this package can help introductory `R` coding and data science in `R` classes would start with `ggplot2` based graphics and `tidyverse` based syntax (or at least also include presentation of `tidyverse` tools especially `mutate`, `group_by/summarize`, `pull/select`, `melt`, and `dcast`).
+
+We note that the "creation of desired data frame" follows along the ideas of the `broom` package. If we can use the `broom` version we will, but otherwise we're create a new function for our analysis.
+
+## Philosophical Package Setup
+
+The user of this package is encouraged to think of the package as consisting of only 3 functions.
+
++ `ggDiagnose`
++ `dfCompile`
++ `ggVis`
+
+Each function will check the provided object (`x`) and assess whether there is a function that can work with that object. 
+
+Both `ggDiagnose` and `ggVis` can be thought of as `ggplot` versions of `plot` but `ggDiagnose` is for models and `ggVis` is for other objects. `dfCompile` creates the main data frame used to create the graphics for the given object.
 
 ## Installation:
 
@@ -11,40 +27,55 @@ library(devtools)
 devtools::install_github("benjaminleroy/ggDiagnose")
 ```
 
-# Philosophy on the package
+This package **requires** very few packages and will tell you when you don't have the necessary additional packages depending upon what objects you're dealing with.
 
-## Commentary
+## Thoughts on package development and request for contributions
 
-All functions need an `x`,  `show_plot`, and `return` parameters. `x` is the object of interest, and the other 2 are logical values if the individual wishes to show the plot(s) and return the data frame that created the plot(s) and a list of plots / the plot object.
+We hope that this continues to grow and add value to more and more individuals by continuing to expand the number of objects it is able to assess. 
 
-## Imports vs Suggest:
+### Commentary
+
+All `ggDiagnose` functions need an `x`,  `show_plot`, and `return` parameters. `x` is the object of interest, and the other 2 are logical values if the individual wishes to show the plot(s) and return the data frame that created the plot(s) and a list of plots / the plot object. 
+
+All `dfCompile` functions need an `x` object, and should return a data frame that can help easily create most if not all of the graphic in `ggDiagnose` of `ggVis`.
+
+### Imports vs Suggest:
 Because this package will continue to grow and create diagnostics and visuals for more and more complicated objects we will only be requiring a limited number of objects and will be using the function `look_for_missing_packages` from `utilities.R` to see if additional packages are needed to download. See `ggDiagnose.lm`'s first couple of lines for recommended approach.  
 
-# TODO:
+## TODO:
 
-`ggDiagnose`:
+overarching:
+
+- [ ] 1. check what broom does for each object. Document when broom doesn't create what we need for the visualizations.
+
+`ggDiagnose` (models):
 
 - [x] 1. lm, glm (from `stats` package): `ggDiagnose.lm`
-- [ ] 2. gam 
+- [ ] 2. Gam (from the original `gam` package - not `mgcv` - or at least not first round) 
 - [x] 3. glmnet (from `glmnet` packages): `ggDiagnose.glmnet`, `ggDiagnose.cv.glmnet`
     - [ ] plot.mrelnet, plot.multnet needed
 - [ ] 4. trees
 - [ ] 5. randomForest
 
-`ggVis`:
+`ggVis` (other objects):
+
 - [ ] 1. sp
 - [ ] 2. dendrogram
 - [ ] 3. matrix (for heatmap?)
 
 clean-up:
+
 - [ ] 1. `ggDiagnose.lm`: try to make code cleaner in terms of creation of data (back away from direct replication)
 
 teaching:
+
 - [ ] 1. In examples for each function provide code to create some / all of the plots in a more basic manner with straight use of `tidyverse`
 
-*Not sure I should work on `ggVis.__` (just `ggplot2` version of plot) for objects that are not models. If the goal is to help starting data scientists / statisticians be able to do everything with `ggplot2` style graphics it probably isn't that helpful/ useful.*
+best coding practices:
 
-# Examples
+- [ ] decide which parameters are passed to the visualization functions and how they differ / are the same of the `plot` implimentation.
+
+## Examples
 
 ### `ggDiagnose.lm` (for an `lm` object.)
 
@@ -109,8 +140,32 @@ plot(cv_glmnet_object)
 ![](images/base_cv_glmnet.jpeg)
 
 ```{r}
-ggDiagnose(ggDiagnose.cv.glmnet(x))
+ggDiagnose(cv_glmnet_object)
 ```
 
 ![](images/ggDiagnose_cv_glmnet.jpeg)
 
+## things to look into:
+
+S3 methods? - should the whole thing be a S3 method?
+
+write a blog post about putting a changing axis on top, link to the one where they transform the equation. Mention Hadley's thoughts on the matter.
+
+## ideas for tests:
+
+1. for all check the data frame coming out of `ggDiagnose` vs `dfCompile`, 
+2. look at the names of the data frame returned by dfCompile
+3. check return options for ggDiagnose
+
+
+## needs for documentation:
+
+pearson residuals (lm.R)
+
+create a new file for package documentation.
+
+see: http://r-pkgs.had.co.nz/man.html#man-packages
+
+## readme needs:
+
+probably should be showcasing `dfCompile` as well... how to do so in `.md`...

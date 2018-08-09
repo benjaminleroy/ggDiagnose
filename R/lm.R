@@ -38,10 +38,15 @@
 #' a list of each individual graphic.
 #' @export
 #'
-#' @example
+#' @examples
 #' lm_object <- lm(Sepal.Length ~., data = iris)
-#' ggDiagnose.lm(lm_object, which = 1:6)
+#'
+#' par(mfrow = c(2,3))
 #' plot(lm_object, which = 1:6)
+#'
+#' ggDiagnose.lm(lm_object, which = 1:6)
+#'
+#' @seealso see \code{\link{dfCompile.lm}} for data creation.
 ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
                           caption = list("Residuals vs Fitted", "Normal Q-Q",
                                          "Scale-Location", "Cook's distance",
@@ -104,7 +109,8 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
                         levels = paste(1L:n))
   }
 
-  expanded_df <- augment.lm(x, labels.id = labels.id) %>% filter(.weights != 0)
+  expanded_df <- dfCompile.lm(x, labels.id = labels.id) %>%
+    filter(.weights != 0)
 
   if (any(show[2L:3L])) {
     ylab23 <- ifelse(isGlm,
@@ -458,49 +464,6 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
 
 }
 
-  ## The following should be in the example, but more of a
-  ## "how to do it yourself" <- maybe with the data.frame that we create instead?
-  ##
-  ## that is to say- I'm not sure if we should show example code
-
-  # x <- lm(Sepal.Length ~., data = iris)
-  #
-  # df <- broom::augment(x)
-  # res_vs_fit <- ggplot(df,
-  #                      aes(x = .fitted, y = .resid)) +
-  #   geom_point(pch = 1) +
-  #   geom_smooth(se = F, color = "red", size = .5) +
-  #   labs(x = "Fitted values",
-  #        y = "Residuals",
-  #        title = "Residuals vs Fitted")
-  #
-  # qq_norm <- ggplot(df, aes(sample = .resid)) +
-  #   geom_qq(distribution = stats::qnorm) +
-  # geom_qq_line(linetype = "dashed") +
-  #   labs(x = "Theoretical Quantiles",
-  #        y = "Standardized Residuals",
-  #        title = "Normal Q-Q")
-  #
-  # sqrt_st_res_vs_fit <- ggplot(diag_data, aes(x = fitted, y = sqrt_st_res)) +
-  #   geom_point() + geom_smooth(se = F)
-  #
-  # st_resid_vs_leverage <- ggplot(diag_data, aes(x = leverage, y = st_resid,
-  #                                               color = cooks)) +
-  #   geom_point() +
-  #   geom_smooth(se = F)
-  #
-  #
-  # grid.arrange(fit_vs_y, ggplot(),
-  #              res_vs_fit, qq_norm,
-  #              sqrt_st_res_vs_fit, st_resid_vs_leverage, nrow = 3)
-
-
-# quartz(); ggDiagnose.lm(lm(Sepal.Width ~ ., data = iris),which = 1:6, smooth_color = "red", dashed_color = rep("orange",6))
-# quartz(); par(mfrow = c(2,3)); plot(lm(Sepal.Width ~ ., data = iris),which = 1:6)
-#
-#
-# ggDiagnose.lm(lm(Sepal.Width ~ ., data = iris))
-
 
 #' Creates an augmented data frame for lm and glm objects (for \pkg{ggplot2}
 #' visuals)
@@ -514,7 +477,7 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
 #' @return augmented data.frame, see \code{details} for more information
 #'
 #' @details
-#' \itemize{
+#' \describe{
 #'   \item{original data frame}{original data frame used to create lm or glm
 #'   object}
 #'   \item{.index}{row number 1 to \code{nrow(original data)}}
@@ -525,35 +488,43 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
 #'   (not probablities, logit probabilities, log transformed, etc), as such,
 #'   for glm this is different then \code{fitted(x)}}
 #'   \item{.resid}{residuals between \code{.yhat} and \code{y}}
-#'   \item{.leverage}{leverage for each observation, corresponds to the
-#'   $diag(XX^T)$ NOTE: GIVE BETTER DESCRIPTION}
+#'   \item{.leverage}{leverage for each observation, corresponds to the diagonal
+#'   of the "hat" matrix (\eqn{diag(X(X^TX)^{-1}X)}. }
 #'   \item{.cooksd}{Cook's Distance, if \code{lm}, then we use the estimated
-#'   standard deviation to calculate the value }
+#'   standard deviation to calculate the value. Cook's Distance is the a
+#'   "leave-one-out" based diagnostic for linear and generalized linear models
+#'   discussed in Belsley, Kuh and Welsch (1980), Cook and Weisberg (1982), etc}
 #'   \item{.weighted.resid}{residuals weighted by the \code{.weights}, (i.e.
-#'   $\sqrt{\code{.weights}} \cdot \code{.resid}$)}
+#'   \eqn{\sqrt{ .weights } \cdot .resid})}
 #'   \item{.std.resid}{the standardized residuals using weighted.residuals
 #'   and scaled by leverage and the estimated standard deviation, (i.e.
-#'   $\frac{\code{.weighted.resid}}{std.deviation \cdot (1 - \code{.leverage})}
-#'   )$}
+#'   \eqn{\frac{\code{.weighted.resid}}{std.deviation * (1 - \code{.leverage})}}
+#'   )}
 #'   \item{.sqrt.abs.resid}{the square-root of the absolute value of the
 #'   standardized residuals}
 #'   \item{.pearson.resid}{pearson residuals, residuals weighted using the
 #'   pearson formula NOTE: GIVE BETTER DESCRIPTION}
 #'   \item{.std.pearson.resid}{standardized pearson residuals, (i.e.
-#'   $\frac{\code{.pearson.resid}}{std.deviation \cdot (1- \code{.leverage})})}
-#'   \item{.logit.leverage}{logit (i.e. $log(\frac{x}{1-x})$) of the leverage}
+#'   \eqn{\frac{\code{.pearson.resid}}{std.deviation * (1- \code{.leverage})}})}
+#'   \item{.logit.leverage}{logit of the leverage
+#'   (i.e. \eqn{log(\frac{x}{1-x})})}
 #'   \item{.ordering.resid}{Index ordering of residuals (in absolute value)}
-#'   \item{.ordering.std.resid}{Index ordering of above standardized residuals
+#'   \item{.ordering.std.resid}{Index ordering of standardized residuals
 #'   (in absolute value)}
-#'   \item{.ordering.cooks}{Index ordering of largest cook's distance}
-#'   \item{.non.extreme.leverage}{logical vector if leverage != 1}
+#'   \item{.ordering.cooks}{Index ordering of cook's distance}
+#'   \item{.non.extreme.leverage}{logical vector if leverage != 1
+#'   (for extreme cases)}
 #'   }
+#'
 #' @export
 #'
 #' @examples
+#' library(tidyverse)
+#'
 #' lm_object <- lm(Sepal.Length ~., data = iris)
-#' augment.lm(lm_object)
-augment.lm <- function(x, labels.id = factor(names(residuals(x)),
+#'
+#' dfCompile.lm(lm_object) %>% head
+dfCompile.lm <- function(x, labels.id = factor(names(residuals(x)),
                                              levels = names(residuals(x)))) {
 
   # pkg requirements (for this function)
@@ -617,9 +588,9 @@ augment.lm <- function(x, labels.id = factor(names(residuals(x)),
                   .std.pearson.resid = dropInf(output_df$.pearson.resid /
                                           (s * sqrt(1 - output_df$.leverage)),
                                           output_df$.leverage),
-                  .logit.leverage = dropInf(expanded_df$.leverage /
-                                              (1 - expanded_df$.leverage),
-                                              expanded_df$.leverage)
+                  .logit.leverage = dropInf(output_df$.leverage /
+                                              (1 - output_df$.leverage),
+                                              output_df$.leverage)
     )
 
   output_df <- output_df %>%
@@ -660,5 +631,3 @@ augment.lm <- function(x, labels.id = factor(names(residuals(x)),
 
 }
 
-# x <- lm(Sepal.Length ~., data = iris)
-# broom::augment(x) %>% names
