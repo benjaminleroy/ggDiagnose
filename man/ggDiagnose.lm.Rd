@@ -9,9 +9,9 @@ ggDiagnose.lm(x, which = c(1L:3L, 5L), caption = list("Residuals vs Fitted",
   expression("Cook's dist vs Leverage  " * h[ii]/(1 - h[ii]))),
   sub.caption = NULL, main = NULL, ..., id.n = 3,
   labels.id = factor(names(residuals(x)), levels = names(residuals(x))),
-  qqline = TRUE, cook.levels = c(0.5, 1), show_plot = TRUE,
-  return = FALSE, shape = 1, nrow = 2, smooth_color = "blue",
-  dashed_color = c("red", "blue", NA, NA, "red", "black"))
+  qqline = TRUE, cook.levels = c(0.5, 1), show.plot = TRUE,
+  return = FALSE, shape = 1, nrow = 2, smooth.color = "blue",
+  dashed.color = c("red", "blue", NA, NA, "red", "black"))
 }
 \arguments{
 \item{x}{\code{lm} or \code{glm} object}
@@ -37,22 +37,22 @@ to the formula of the model.)}
 \item{cook.levels}{levels of cooks distance to visualize in the leverage vs
 standardized residual graphic}
 
-\item{show_plot}{logic to display the graphics (group of graphics in this
+\item{show.plot}{logic to display the graphics (group of graphics in this
 case)}
 
 \item{return}{logic to return list of graphics and the data frame to make
 the majority of graphics}
 
-\item{shape}{shape of points (default is 1, open circle)}
+\item{shape}{shape of points (the default is 1, an open circle)}
 
 \item{nrow}{number of rows in the displayed graphic}
 
-\item{smooth_color}{color for smoothing lines}
+\item{smooth.color}{color for smoothing lines}
 
-\item{dashed_color}{color for dashed line (a vector of length 6 is expected)}
+\item{dashed.color}{color for dashed line (a vector of length 6 is expected)}
 }
 \value{
-depending on \code{show_plot} and \code{return} it
+depending on \code{show.plot} and \code{return} it
 will return the visualization of the graphics and/or a list
 of both the data frame used the make the majority of the graphic and
 a list of each individual graphic.
@@ -68,12 +68,12 @@ This function can deal with \code{\link[stats]{lm}} and
 \code{\link[stats]{glm}} objects.
 }
 \examples{
-lm_object <- lm(Sepal.Length ~., data = iris)
+lm.object <- lm(Sepal.Length ~., data = iris)
 
 par(mfrow = c(2,3))
-plot(lm_object, which = 1:6)
+plot(lm.object, which = 1:6)
 
-ggDiagnose.lm(lm_object, which = 1:6)
+ggDiagnose.lm(lm.object, which = 1:6)
 
 }
 \seealso{

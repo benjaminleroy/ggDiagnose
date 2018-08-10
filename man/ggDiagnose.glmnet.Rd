@@ -5,7 +5,7 @@
 \title{Diagnostic plot for glmnet object (ggplot based)}
 \usage{
 ggDiagnose.glmnet(x, xvar = c("norm", "lambda", "dev"), label = FALSE,
-  show_plot = TRUE, return = FALSE, ...)
+  show.plot = TRUE, return = FALSE, ...)
 }
 \arguments{
 \item{x}{\code{glmnet} object from \code{\link[glmnet]{glmnet}} library}
@@ -14,7 +14,7 @@ ggDiagnose.glmnet(x, xvar = c("norm", "lambda", "dev"), label = FALSE,
 
 \item{label}{logic to label each beta value's line with an integer value}
 
-\item{show_plot}{logic to display the plot}
+\item{show.plot}{logic to display the plot}
 
 \item{return}{logic to return list the graphic and the data frame to make
 the majority of the graphic}
@@ -22,7 +22,7 @@ the majority of the graphic}
 \item{...}{extra attributes (currently not used)}
 }
 \value{
-depending on \code{show_plot} and \code{return} it
+depending on \code{show.plot} and \code{return} it
 will return the visualization of the graphic and/or a list
 of both the data frame used the make the majority of the graphic and
 the graphic object itself.
@@ -49,12 +49,12 @@ For \code{xvar} you have the option of selecting
 This will be the value of the variable on the x axis.
 }
 \examples{
-glmnet_object <- glmnet(y = iris$Sepal.Length,
+glmnet.object <- glmnet(y = iris$Sepal.Length,
                         x = model.matrix(Sepal.Length~., data = iris))
 
-plot(glmnet_object)
+plot(glmnet.object)
 
-ggDiagnose.glmnet(glmnet_object)
+ggDiagnose.glmnet(glmnet.object)
 }
 \seealso{
 see \code{\link{dfCompile.glmnet}} for data creation.

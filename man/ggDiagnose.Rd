@@ -4,12 +4,12 @@
 \alias{ggDiagnose}
 \title{Diagnostic plot for objects (ggplot based)}
 \usage{
-ggDiagnose(x, show_plot = TRUE, return = FALSE, ...)
+ggDiagnose(x, show.plot = TRUE, return = FALSE, ...)
 }
 \arguments{
 \item{x}{object to visualize}
 
-\item{show_plot}{logic to display the plot}
+\item{show.plot}{logic to display the plot}
 
 \item{return}{logic to return list the graphic and the data frame to make
 the majority of the graphic}
@@ -18,7 +18,7 @@ the majority of the graphic}
 information}
 }
 \value{
-depending on \code{show_plot} and \code{return} it
+depending on \code{show.plot} and \code{return} it
 will return the visualization of the graphic and/or a list
 of both the data frame used the make the majority of the graphic and
 the graphic object itself.

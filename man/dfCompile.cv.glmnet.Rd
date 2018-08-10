@@ -32,10 +32,10 @@ data frame returned has the following columns:
   }
 }
 \examples{
-cv_glmnet_object <- cv.glmnet(y = iris$Sepal.Length,
+cv.glmnet.object <- cv.glmnet(y = iris$Sepal.Length,
                               x = model.matrix(Sepal.Length~., data = iris))
 
-dfCompile.cv.glmnet(cv_glmnet_object) \%>\% head
+dfCompile.cv.glmnet(cv.glmnet.object) \%>\% head
 }
 \seealso{
 \code{broom}'s \code{\link[broom]{tidy}} and use with the

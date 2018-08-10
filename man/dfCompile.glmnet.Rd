@@ -37,10 +37,10 @@ data frame returned has the following columns:
 }
 \examples{
 library(tidyverse)
-glmnet_object <- glmnet(y = iris$Sepal.Length,
+glmnet.object <- glmnet(y = iris$Sepal.Length,
                         x = model.matrix(Sepal.Length~., data = iris))
 
-dfCompile.glmnet(glmnet_object) \%>\% head
+dfCompile.glmnet(glmnet.object) \%>\% head
 }
 \seealso{
 \code{broom}'s \code{\link[broom]{tidy}} and use with the

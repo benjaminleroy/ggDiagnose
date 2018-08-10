@@ -9,7 +9,7 @@ dfCompile(x, ...)
 \arguments{
 \item{x}{object to visualize}
 
-\item{...}{additional parameters, see \code{augment.__} for more
+\item{...}{additional parameters, see \code{dfCompile.__} for more
 information}
 }
 \value{

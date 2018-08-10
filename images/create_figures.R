@@ -49,7 +49,19 @@ ggDiagnose(cv_glmnet_object)
 dev.off()
 
 
-## ggDiagnose.gam
+## ggDiagnose.Gam
 
-gam_object <- gam(Sepal.Length ~ s(Sepal.Width) + Species,
+gam_object <- gam::gam(Sepal.Length ~ gam::s(Sepal.Width) + Species,
                   data = iris)
+
+jpeg(filename = paste0("base_Gam.jpeg"),
+     width = 10, height = 6.5, units = "in", res = 100)
+par(mfrow = c(1,2))
+plot(gam_object, se = TRUE, residuals = TRUE)
+dev.off()
+
+jpeg(filename = paste0("ggDiagnose_Gam.jpeg"),
+     width = 10, height = 6.5, units = "in", res = 100)
+ggDiagnose(gam_object, residuals = TRUE) # se = TRUE by default
+dev.off()
+

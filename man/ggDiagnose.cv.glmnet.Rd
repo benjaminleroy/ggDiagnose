@@ -5,7 +5,7 @@
 \title{Diagnostic plot for cv.glmnet object (ggplot based)}
 \usage{
 ggDiagnose.cv.glmnet(x, sign.lambda = 1, color = "red",
-  dashed_color = "red", show_plot = TRUE, return = FALSE, ...)
+  dashed.color = "red", show.plot = TRUE, return = FALSE, ...)
 }
 \arguments{
 \item{x}{\code{cv.glmnet} object from library \code{\link[glmnet]{glmnet}}}
@@ -14,10 +14,10 @@ ggDiagnose.cv.glmnet(x, sign.lambda = 1, color = "red",
 
 \item{color}{color of CV MSE average dot}
 
-\item{dashed_color}{color of dashed lines for \code{1se} and \code{min}
+\item{dashed.color}{color of dashed lines for \code{1se} and \code{min}
 \code{lambda} values}
 
-\item{show_plot}{logic to display the plot}
+\item{show.plot}{logic to display the plot}
 
 \item{return}{logic to return list the graphic and the data frame to make
 the majority of the graphic}
@@ -25,7 +25,7 @@ the majority of the graphic}
 \item{...}{extra attributes (currently not used)}
 }
 \value{
-depending on \code{show_plot} and \code{return} it
+depending on \code{show.plot} and \code{return} it
 will return the visualization of the graphic and/or a list
 of both the data frame used the make the majority of the graphic and
 the graphic object itself.
@@ -36,12 +36,12 @@ This function creates a \code{\link[ggplot2]{ggplot}} graphic version of
 objects.
 }
 \examples{
-cv_glmnet_object <- cv.glmnet(y = iris$Sepal.Length,
+cv.glmnet.object <- cv.glmnet(y = iris$Sepal.Length,
                               x = model.matrix(Sepal.Length~., data = iris))
 
-plot(cv_glmnet_object)
+plot(cv.glmnet.object)
 
-ggDiagnose(cv_glmnet_object)
+ggDiagnose(cv.glmnet.object)
 }
 \seealso{
 \code{\link{dfCompile.cv.glmnet}} for data creation.

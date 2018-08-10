@@ -63,7 +63,7 @@ and \code{glm} objects but with prepared for the diagnostic plots.
 \examples{
 library(tidyverse)
 
-lm_object <- lm(Sepal.Length ~., data = iris)
+lm.object <- lm(Sepal.Length ~., data = iris)
 
-dfCompile.lm(lm_object) \%>\% head
+dfCompile.lm(lm.object) \%>\% head
 }

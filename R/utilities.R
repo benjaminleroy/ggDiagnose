@@ -2,18 +2,18 @@
 
 #' Inner function to check if package names are in the namespace
 #'
-#' @param package_names list of package names to check are in the Namespace
+#' @param package.names list of package names to check are in the Namespace
 #'
 #' @return vector of packages that are missing
-look_for_missing_packages <- function(package_names) {
-  missing_packages <- c()
+look.for.missing.packages <- function(package.names) {
+  missing.packages <- c()
 
-  for (package_name in package_names) {
-    if (!requireNamespace(package_name, quietly = TRUE)) {
-      missing_packages <- c(missing_packages, package_name)
+  for (package.name in package.names) {
+    if (!requireNamespace(package.name, quietly = TRUE)) {
+      missing.packages <- c(missing.packages, package.name)
     }
   }
-  return(missing_packages)
+  return(missing.packages)
 }
 
 

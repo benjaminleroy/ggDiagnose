@@ -9,14 +9,14 @@
 #' @param x \code{cv.glmnet} object from library \code{\link[glmnet]{glmnet}}
 #' @param sign.lambda what sign of \code{lambda} you'd like \eqn{\\pm 1}
 #' @param color color of CV MSE average dot
-#' @param dashed_color color of dashed lines for \code{1se} and \code{min}
+#' @param dashed.color color of dashed lines for \code{1se} and \code{min}
 #' \code{lambda} values
-#' @param show_plot logic to display the plot
+#' @param show.plot logic to display the plot
 #' @param return logic to return list the graphic and the data frame to make
 #' the majority of the graphic
 #' @param ... extra attributes (currently not used)
 #'
-#' @return depending on \code{show_plot} and \code{return} it
+#' @return depending on \code{show.plot} and \code{return} it
 #' will return the visualization of the graphic and/or a list
 #' of both the data frame used the make the majority of the graphic and
 #' the graphic object itself.
@@ -26,26 +26,26 @@
 #' @export
 #'
 #' @examples
-#' cv_glmnet_object <- cv.glmnet(y = iris$Sepal.Length,
+#' cv.glmnet.object <- cv.glmnet(y = iris$Sepal.Length,
 #'                               x = model.matrix(Sepal.Length~., data = iris))
 #'
-#' plot(cv_glmnet_object)
+#' plot(cv.glmnet.object)
 #'
-#' ggDiagnose(cv_glmnet_object)
+#' ggDiagnose(cv.glmnet.object)
 ggDiagnose.cv.glmnet <- function(x, sign.lambda = 1, color = "red",
-                                 dashed_color = "red",
-                                 show_plot = TRUE, return = FALSE, ...){
+                                 dashed.color = "red",
+                                 show.plot = TRUE, return = FALSE, ...){
 
-  missing_packages <- look_for_missing_packages(c("glmnet"))
+  missing.packages <- look.for.missing.packages(c("glmnet"))
   # ^also requires ggplot2
 
-  if (length(missing_packages) > 0) {
-    stop(paste0(c("Package(s) '",paste0(missing_packages, collapse = "', '"),
+  if (length(missing.packages) > 0) {
+    stop(paste0(c("Package(s) '",paste0(missing.packages, collapse = "', '"),
                   "' needed for this function to work. Please install them/it."),
                 collapse = ""))
   }
 
-  if (!any(show_plot, return)) {
+  if (!any(show.plot, return)) {
     return(NULL)
   }
 
@@ -54,58 +54,58 @@ ggDiagnose.cv.glmnet <- function(x, sign.lambda = 1, color = "red",
     xlabel <- paste("-", xlabel, sep = "")
   }
 
-  expanded_df <- dfCompile.cv.glmnet(x)
+  expanded.df <- dfCompile.cv.glmnet(x)
 
   lambda.min <- x$lambda.min
   lambda.1se <- x$lambda.1se
 
-  inner_function <- function(log.lambda){
-    which <- sapply(log.lambda, function(x) which(x == expanded_df$.log.lambda))
-    return(expanded_df$number.non.zero[expanded_df$.log.lambda == .log.lambda])
+  inner.function <- function(log.lambda){
+    which <- sapply(log.lambda, function(x) which(x == expanded.df$.log.lambda))
+    return(expanded.df$number.non.zero[expanded.df$.log.lambda == .log.lambda])
   }
 
-  ggout <- ggplot2::ggplot(expanded_df, ggplot2::aes(y = cross.validated.error,
+  ggout <- ggplot2::ggplot(expanded.df, ggplot2::aes(y = cross.validated.error,
                           x = sign.lambda*.log.lambda)) +
     ggplot2::geom_point(color = color) +
     ggplot2::geom_errorbar(ggplot2::aes(ymin = cross.validation.upper.error,
                       ymax = cross.validation.lower.error)) +
-    ggplot2::geom_vline(data = data.frame(x_line =
+    ggplot2::geom_vline(data = data.frame(x.line =
                                             c(sign.lambda*log(lambda.min),
                                               sign.lambda*log(lambda.1se))),
-                        ggplot2::aes(xintercept = x_line),
+                        ggplot2::aes(xintercept = x.line),
                linetype = 2,
-               color = dashed_color[1]) +
+               color = dashed.color[1]) +
     ggplot2::labs(x = xlabel,
          y = x$name)
 
   if (sign.lambda == 1) {
-    major_breaks <- expanded_df$.log.lambda[nrow(expanded_df):1][
+    major.breaks <- expanded.df$.log.lambda[nrow(expanded.df):1][
       findInterval(as.numeric(ggplot2::ggplot_build(ggout)$layout$panel_params[[1]]$x.labels),
-                   expanded_df$.log.lambda[nrow(expanded_df):1])
+                   expanded.df$.log.lambda[nrow(expanded.df):1])
       ]
   } else if (sig.lambda == -1) {
-    major_breaks <- expanded_df$.log.lambda[
+    major.breaks <- expanded.df$.log.lambda[
       findInterval(as.numeric(ggplot2::ggplot_build(ggout)$layout$panel_params[[1]]$x.labels),
-                                 -1*expanded_df$.log.lambda)
+                                 -1*expanded.df$.log.lambda)
       ]
   }
 
 
   ggout <- ggout + ggplot2::scale_x_continuous(sec.axis =
                                                  ggplot2::sec_axis(~ . * 1,
-                                          breaks = major_breaks,
+                                          breaks = major.breaks,
                                           labels =
-                                            sapply(major_breaks,
+                                            sapply(major.breaks,
                                                    function(x) {
-                                                  expanded_df$number.non.zero[
-                                     expanded_df$.log.lambda == sign.lambda*x]}),
+                                                  expanded.df$number.non.zero[
+                                     expanded.df$.log.lambda == sign.lambda*x]}),
                                     name = "# non-zero coefficients"))
 
-  if (show_plot) {
+  if (show.plot) {
     print(ggout)
   }
   if (return) {
-    return(list(data = expanded_df, ggout = ggout))
+    return(list(data = expanded.df, ggout = ggout))
   }
 }
 
@@ -137,12 +137,12 @@ ggDiagnose.cv.glmnet <- function(x, sign.lambda = 1, color = "red",
 #' same object.
 #'
 #' @examples
-#' cv_glmnet_object <- cv.glmnet(y = iris$Sepal.Length,
+#' cv.glmnet.object <- cv.glmnet(y = iris$Sepal.Length,
 #'                               x = model.matrix(Sepal.Length~., data = iris))
 #'
-#' dfCompile.cv.glmnet(cv_glmnet_object) %>% head
+#' dfCompile.cv.glmnet(cv.glmnet.object) %>% head
 dfCompile.cv.glmnet <- function(x){
-  expanded_df <- data.frame(
+  expanded.df <- data.frame(
     `cross.validated.error` = x$cvm,
     `cross.validation.upper.error` = x$cvup,
     `cross.validation.lower.error` = x$cvlo,
@@ -150,7 +150,7 @@ dfCompile.cv.glmnet <- function(x){
     `.log.lambda` = log(x$lambda)
   )
 
-  return(expanded_df)
+  return(expanded.df)
 }
 
 #' Diagnostic plot for glmnet object (ggplot based)
@@ -162,12 +162,12 @@ dfCompile.cv.glmnet <- function(x){
 #' @param x \code{glmnet} object from \code{\link[glmnet]{glmnet}} library
 #' @param xvar string for x axis variable (see details)
 #' @param label logic to label each beta value's line with an integer value
-#' @param show_plot logic to display the plot
+#' @param show.plot logic to display the plot
 #' @param return logic to return list the graphic and the data frame to make
 #' the majority of the graphic
 #' @param ... extra attributes (currently not used)
 #'
-#' @return depending on \code{show_plot} and \code{return} it
+#' @return depending on \code{show.plot} and \code{return} it
 #' will return the visualization of the graphic and/or a list
 #' of both the data frame used the make the majority of the graphic and
 #' the graphic object itself.
@@ -192,20 +192,20 @@ dfCompile.cv.glmnet <- function(x){
 #' @seealso see \code{\link{dfCompile.glmnet}} for data creation.
 #'
 #' @examples
-#' glmnet_object <- glmnet(y = iris$Sepal.Length,
+#' glmnet.object <- glmnet(y = iris$Sepal.Length,
 #'                         x = model.matrix(Sepal.Length~., data = iris))
 #'
-#' plot(glmnet_object)
+#' plot(glmnet.object)
 #'
-#' ggDiagnose.glmnet(glmnet_object)
+#' ggDiagnose.glmnet(glmnet.object)
 ggDiagnose.glmnet <- function(x, xvar = c("norm","lambda","dev"), label = FALSE,
-                              show_plot = TRUE, return = FALSE, ...){
+                              show.plot = TRUE, return = FALSE, ...){
 
-  missing_packages <- look_for_missing_packages(c("glmnet"))
+  missing.packages <- look.for.missing.packages(c("glmnet"))
   # ^also requires ggplot2, dplyr, reshape2
 
-  if (length(missing_packages) > 0) {
-    stop(paste0(c("Package(s) '",paste0(missing_packages, collapse = "', '"),
+  if (length(missing.packages) > 0) {
+    stop(paste0(c("Package(s) '",paste0(missing.packages, collapse = "', '"),
                   "' needed for this function to work. Please install them/it."),
                 collapse = ""))
   }
@@ -220,12 +220,12 @@ ggDiagnose.glmnet <- function(x, xvar = c("norm","lambda","dev"), label = FALSE,
          },
          "1" = warning("1 or less nonzero coefficients; glmnet plot is not meaningful")
   )
-  vis_df <- dfCompile.glmnet(x)
+  vis.df <- dfCompile.glmnet(x)
 
 
 
   if (label) {
-    vis_df_last <- vis_df %>%
+    vis.df.last <- vis.df %>%
       filter(.log.lambda == min(.log.lambda)) %>%
       dplyr::mutate(.variable.num = as.numeric(factor(variable,
                                                      levels = rownames(x$beta))))
@@ -246,7 +246,7 @@ ggDiagnose.glmnet <- function(x, xvar = c("norm","lambda","dev"), label = FALSE,
     approx.f <- 1
   }
 
-  ggout <- ggplot2::ggplot(vis_df, aes_string(x = xvar,
+  ggout <- ggplot2::ggplot(vis.df, aes_string(x = xvar,
                             y = "beta.value",
                             color = "variable")) +
     ggplot2::geom_line() + ggplot2::theme(legend.position = "none")  +
@@ -254,7 +254,7 @@ ggDiagnose.glmnet <- function(x, xvar = c("norm","lambda","dev"), label = FALSE,
          y = "Coefficients")
 
   if (label) {
-    ggout <- ggout + ggplot2::geom_label(data = vis_df_last,
+    ggout <- ggout + ggplot2::geom_label(data = vis.df.last,
                                          ggplot2::aes_string(x = xvar,
                                            y = "beta.value",
                                            color = "variable",
@@ -265,28 +265,28 @@ ggDiagnose.glmnet <- function(x, xvar = c("norm","lambda","dev"), label = FALSE,
 
 
   # breaks for upper x axis labels
-  major_breaks <- sort(unique(vis_df[nrow(vis_df):1,xvar]))[
+  major.breaks <- sort(unique(vis.df[nrow(vis.df):1,xvar]))[
     findInterval(
       as.numeric(
         ggplot2::ggplot_build(ggout)$layout$panel_params[[1]]$x.labels),
-      sort(unique(vis_df[nrow(vis_df):1,xvar])))]
+      sort(unique(vis.df[nrow(vis.df):1,xvar])))]
 
 
   ggout <- ggout + ggplot2::scale_x_continuous(sec.axis =
                                                  ggplot2::sec_axis(~ . * 1,
-                                                 breaks = major_breaks,
+                                                 breaks = major.breaks,
                                                  labels =
-                                                   sapply(major_breaks,
+                                                   sapply(major.breaks,
                                                     function(x) {
-                                                    vis_df$.number.non.zero[
-                                                      vis_df[,xvar] == x]})[1,],
+                                                    vis.df$.number.non.zero[
+                                                      vis.df[,xvar] == x]})[1,],
                                               name = "# non-zero coefficients"))
 
-  if (show_plot) {
+  if (show.plot) {
     print(ggout)
   }
   if (return) {
-    return(list(data = vis_df, ggout = ggout))
+    return(list(data = vis.df, ggout = ggout))
   }
   }
 
@@ -325,13 +325,13 @@ ggDiagnose.glmnet <- function(x, xvar = c("norm","lambda","dev"), label = FALSE,
 #'
 #' @examples
 #' library(tidyverse)
-#' glmnet_object <- glmnet(y = iris$Sepal.Length,
+#' glmnet.object <- glmnet(y = iris$Sepal.Length,
 #'                         x = model.matrix(Sepal.Length~., data = iris))
 #'
-#' dfCompile.glmnet(glmnet_object) %>% head
+#' dfCompile.glmnet(glmnet.object) %>% head
 dfCompile.glmnet <- function(x){
   beta <- as.matrix(x$beta[which,,drop = FALSE])
-  vis_df <- beta %>% t %>% data.frame %>%
+  vis.df <- beta %>% t %>% data.frame %>%
     dplyr::mutate(.norm = apply(abs(beta), 2, sum),
                   .log.lambda = log(x$lambda),
                   .dev = x$dev.ratio,
@@ -344,5 +344,5 @@ dfCompile.glmnet <- function(x){
     dplyr::select(.log.lambda, variable, beta.value,
            .norm, .dev, .number.non.zero)
 
-  return(vis_df)
+  return(vis.df)
 }
