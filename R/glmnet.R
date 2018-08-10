@@ -330,7 +330,7 @@ ggDiagnose.glmnet <- function(x, xvar = c("norm","lambda","dev"), label = FALSE,
 #'
 #' dfCompile.glmnet(glmnet.object) %>% head
 dfCompile.glmnet <- function(x){
-  beta <- as.matrix(x$beta[which,,drop = FALSE])
+  beta <- as.matrix(x[["beta"]][which,,drop = FALSE])
   vis.df <- beta %>% t %>% data.frame %>%
     dplyr::mutate(.norm = apply(abs(beta), 2, sum),
                   .log.lambda = log(x$lambda),
