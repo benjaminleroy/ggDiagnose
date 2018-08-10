@@ -57,7 +57,13 @@ of both the data frame used the make the majority of the graphic and
 a list of each individual graphic.
 }
 \description{
-Diagnostic plot for Gam object (ggplot based)
+this function mimics the \code{\link[gam]{plot.Gam}} function from the
+\code{\link[gam]} package, *not* the \code{\link[mgcv]{plot.gam}} from the
+\code{\link[mgcv]} package.
+}
+\details{
+(however thought to make 2 types of \code{gam}s is annoying.) *remove when
+have both.*
 }
 \examples{
 libary(gam)

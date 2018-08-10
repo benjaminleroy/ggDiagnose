@@ -6,13 +6,6 @@
 
 #' Grab term labels from \code{Gam} object
 #'
-#' this function mimics the \code{\link[gam]{plot.Gam`}} function from the
-#' \code{\link[gam]} package, *not* the \code{\link[mgcv]{plot.gam}} from the
-#' \code{\link[mgcv]} package.
-#'
-#' (however thought to make 2 types of \code{gam}s is annoying.) <- remove when
-#' have both.
-#'
 #' Inner function "lifted" from \code{gam}.
 #'
 #' @param object \code{Gam} object from package \code{gam}
@@ -26,6 +19,13 @@ labels.Gam <- function(object,...){
 
 
 #' Diagnostic plot for Gam object (ggplot based)
+#'
+#' this function mimics the \code{\link[gam]{plot.Gam}} function from the
+#' \code{\link[gam]} package, *not* the \code{\link[mgcv]{plot.gam}} from the
+#' \code{\link[mgcv]} package.
+#'
+#' (however thought to make 2 types of \code{gam}s is annoying.) *remove when
+#' have both.*
 #'
 #' @param x \code{Gam} object from \code{gam} library
 #' @param residuals if TRUE, partial deviance residuals are plotted along with
