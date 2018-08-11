@@ -46,7 +46,7 @@ Overarching (when making new object functionality):
 - [x] 2. `Gam` (from the original `gam` package - not `mgcv` - or at least not first round) 
 - [x] 3. `glmnet` (from `glmnet` packages): `ggDiagnose.glmnet`, `ggDiagnose.cv.glmnet`
     - [ ] `plot.mrelnet`, `plot.multnet needed`?
-- [x] 4. `tree` (from `tree` package - could also one from `rpart` package - use `ggdendro` and (see examples)[https://cran.r-project.org/web/packages/ggdendro/vignettes/ggdendro.html].
+- [x] 4. `tree` (from `tree` package - could also one from `rpart` package - use `ggdendro` and [see examples](https://cran.r-project.org/web/packages/ggdendro/vignettes/ggdendro.html).
 - [ ] 5. `randomForest`
 
 `ggVis` (other objects):
@@ -72,11 +72,11 @@ best coding practices:
 
 Links to examples:
 
-+ [`ggDiagnose.lm`](#ggdiagnose.lm)
-+ [`ggDiagnose.glmnet`](#ggdiagnose.glmnet)
-+ [`ggDiagnose.cv.glmnet`](#ggdiagnose.cv.glmnet)
-+ [`ggDiagnose.Gam`](#ggdiagnose.gam)
-+ [`ggDiagnose.tree`](#ggdiagnose.tree)
++ [`ggDiagnose.lm`](#ggdiagnoselm)
++ [`ggDiagnose.glmnet`](#ggdiagnoseglmnet)
++ [`ggDiagnose.cv.glmnet`](#ggdiagnosecvglmnet)
++ [`ggDiagnose.Gam`](#ggdiagnosegam)
++ [`ggDiagnose.tree`](#ggdiagnosetree)
 
 ## `ggDiagnose.lm` 
 
