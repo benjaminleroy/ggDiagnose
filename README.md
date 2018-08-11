@@ -1,6 +1,6 @@
 # ggDiagnose
 
-This package is geared towards Data Scientists, Students and the broader Statistics Coummunity who increasingly use `ggplot` and `tidyverse` tools to explore and visualize their data. In this package we provide functions that create `ggplot` based visualizations that can replace the base `plot` function to diagnose and visualize `R` objects.
+This package is geared towards data scientists, statistics students and the broader statistics community who increasingly use `ggplot2` and `tidyverse` tools to explore and visualize their data. In this package we provide functions that create `ggplot2` based visualizations that can replace the base `plot` function to diagnose and visualize `R` objects.
 
 *For examples of visuals see the [example section](#examples).*
 
@@ -8,15 +8,15 @@ This package is geared towards Data Scientists, Students and the broader Statist
 
 `ggDiagnose` consists of 3 major functions; `ggDiagnose`, `ggVis` and `dfCompile`.
 
-The first 2, `ggDiagnose` and `ggVis` proivde `ggplot` graphics similar to what the base `plot` function would provide for the specific `R` objects. `ggDiagnose` does so for statistical model objects and `ggVis` does so for other objects.
+The first 2, `ggDiagnose` and `ggVis` provide `ggplot2` graphics similar to what the base `plot` function would provide for the specific `R` objects. `ggDiagnose` does so for statistical model objects and `ggVis` does so for other objects.
 
 `dfCompile` provides the user with a data frame that could be used to create the `ggDiagnose` and/or `ggVis` graphics for that specific object (or at least the vast majority of the graphic/graphics). This function is similar to `broom`'s `augment` and `tidy` functions.
 
 ## Philosophy
 
-This package was developed to encourage more students (and Professor's teaching `R`) to work with `tidyverse` / `ggplot2` paradigm when learning Statistical Machine Learning tools. Additionally, it quickly became a focus to also tailor this package to data scientists, providing quick and quality `ggplot2` versions of diagnostic graphics for presentations and data scientists work flow.
+This package was developed to encourage more students (and Professors teaching `R`) to work within the `tidyverse` / `ggplot2` paradigm when learning Statistical Machine Learning tools. Additionally, it quickly became a focus to also tailor this package to data scientists, providing quick and quality `ggplot2` versions of diagnostic graphics for presentations and aid in data scientists work flow.
 
-We include `dfCompile`, which is similar to `broom`'s `augment` and `tidy` functions to assist students and data scientistis in building graphics to their linking (either from the ground-up or updating provided graphics). In addition we hope that access to the "raw" data would encourage students to get a better understanding of what is going underneath the hood (in terms of `tidyverse` and `gglot2` paradigms).
+We include `dfCompile`, which is similar to `broom`'s `augment` and `tidy` functions to assist students and data scientists in building graphics to their liking (either from the ground-up or updating provided graphics) by providing the data frames that created the associated `ggDiagnose` and `ggVis` graphics. In addition, we hope that access to this "raw" data would encourage students to develop a better understanding of what is going underneath the hood (in terms of `tidyverse` and `gglot2` paradigms).
 
 # Installation
 
@@ -27,7 +27,7 @@ library(devtools)
 devtools::install_github("benjaminleroy/ggDiagnose")
 ```
 
-This package **requires** very few packages; if depndencies are required for a specific object's functions, the user is prompted to install such packages.
+This package **requires** very few packages; if dependencies are required for a specific object's functions, the user is prompted to install such packages.
 
 # Future of the Package
 
@@ -42,27 +42,27 @@ Overarching (when making new object functionality):
 
 `ggDiagnose` (models):
 
-- [x] 1. lm, glm (from `stats` package): `ggDiagnose.lm`
-- [x] 2. Gam (from the original `gam` package - not `mgcv` - or at least not first round) 
-- [x] 3. glmnet (from `glmnet` packages): `ggDiagnose.glmnet`, `ggDiagnose.cv.glmnet`
-    - [ ] plot.mrelnet, plot.multnet needed?
-- [ ] 4. trees
-- [ ] 5. randomForest
+- [x] 1. `lm`, `glm` (from `stats` package): `ggDiagnose.lm`
+- [x] 2. `Gam` (from the original `gam` package - not `mgcv` - or at least not first round) 
+- [x] 3. `glmnet` (from `glmnet` packages): `ggDiagnose.glmnet`, `ggDiagnose.cv.glmnet`
+    - [ ] `plot.mrelnet`, `plot.multnet needed`?
+- [ ] 4. `trees`
+- [ ] 5. `randomForest`
 
 `ggVis` (other objects):
 
-- [ ] 1. sp
-- [ ] 2. dendrogram
-- [ ] 3. matrix (for heatmap?)
+- [ ] 1. `sp`
+- [ ] 2. `dendrogram`
+- [ ] 3. `matrix` (for `heatmap`?)
 
 
 teaching:
 
-- [ ] 1. In examples for each function provide code to create some / all of the plots in a more basic manner with straight use of `tidyverse`. (Is this worthwhile? maybe fore non-trivial/non standard `ggplot` graphics?)
+- [ ] 1. In examples for each function provide code to create some / all of the plots in a more basic manner with straight use of `tidyverse`. (Is this worthwhile? maybe for non-trivial/non standard `ggplot2` graphics?)
 
 best coding practices:
 
-- [ ] 1. decide which parameters are passed to the visualization functions and how they differ / are the same of the `plot` implimentation.
+- [ ] 1. decide which parameters are passed to the visualization functions and how they differ / are the same of the `plot` implementation. For all visuals we have `show.plot` and `return` parameters.
 
  documentation:
 
@@ -70,7 +70,7 @@ best coding practices:
 
 # Examples
 
-## `ggDiagnose.lm` (for an `lm` object.)
+## `ggDiagnose.lm` (for an `lm` object, function works for `glm` and `rlm` objects as well.)
 
 ```{r}
 lm.object <- lm(Sepal.Length ~., data = iris)
@@ -171,16 +171,16 @@ ggDiagnose(gam.object, residuals = TRUE) # se = TRUE by default
 
 S3 methods? - should the whole thing be a S3 method?
 
-write a blog post about putting a changing axis on top, link to the one where they transform the equation. Mention Hadley's thoughts on the matter.
+Write a blog post about putting a changing axis on top, link to the one where they transform the equation. Mention Hadley's thoughts on the matter.
 
 ## ideas for tests:
 
 1. for all check the data frame coming out of `ggDiagnose` vs `dfCompile`, 
-2. look at the names of the data frame returned by dfCompile
-3. check return options for ggDiagnose
+2. look at the names of the data frame returned by `dfCompile`
+3. check return options for `ggDiagnose`
 
 
 
 ## readme needs:
 
-probably should be showcasing `dfCompile` as well... how to do so in `.md`...
+Probably should be showcasing `dfCompile` as well... how to do so in `.md`...
