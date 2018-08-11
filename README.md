@@ -38,7 +38,7 @@ This package was envisioned as a package that would naturally grow to meet the n
 
 Overarching (when making new object functionality):
 
-- [ ] 1. check what broom does for each object. Document when broom doesn't create what we need for the visualizations.
+- [ ] 1. check what `broom` does for each object. Document when `broom` doesn't create what we need for the visualizations.
 
 `ggDiagnose` (models):
 

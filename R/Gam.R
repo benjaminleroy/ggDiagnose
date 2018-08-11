@@ -18,7 +18,7 @@ labels.Gam <- function(object, ...){
 
 
 
-#' Diagnostic plot for Gam object (ggplot based)
+#' Diagnostic plot for \code{Gam} object (\code{ggplot2} based)
 #'
 #' this function mimics the \code{\link[gam]{plot.Gam}} function from the
 #' \pkg{gam} package, \strong{not} the \code{\link[mgcv]{plot.gam}} from

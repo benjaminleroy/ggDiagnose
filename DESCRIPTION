@@ -18,6 +18,7 @@ Requires:
 Suggests:
     broom,
     gam,
+    ggdendro,
     grDevices,
     graphics,
     glmnet,

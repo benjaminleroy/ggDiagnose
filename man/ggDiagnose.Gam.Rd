@@ -2,7 +2,7 @@
 % Please edit documentation in R/Gam.R
 \name{ggDiagnose.Gam}
 \alias{ggDiagnose.Gam}
-\title{Diagnostic plot for Gam object (ggplot based)}
+\title{Diagnostic plot for \code{Gam} object (\code{ggplot2} based)}
 \usage{
 ggDiagnose.Gam(x, residuals = NULL, rugplot = TRUE, se = TRUE,
   terms = labels.Gam(x), ..., jitter = TRUE, point.shape = 1,
