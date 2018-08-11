@@ -50,7 +50,7 @@ dev.off()
 
 
 ## ggDiagnose.Gam
-
+library(gam)
 gam.object <- gam::gam(Sepal.Length ~ gam::s(Sepal.Width) + Species,
                   data = iris)
 

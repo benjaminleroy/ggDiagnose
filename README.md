@@ -1,59 +1,56 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
 # ggDiagnose
 
-## Philosophy and Purpose
+This package is geared towards Data Scientists, Students and the broader Statistics Coummunity who increasingly use `ggplot` and `tidyverse` tools to explore and visualize their data. In this package we provide functions that create `ggplot` based visualizations that can replace the base `plot` function to diagnose and visualize `R` objects.
 
-This package started with the idea that one should be able to quickly be able to create `ggplot` based graphics for diagnostics of basic models similar to that of the base `plot` functionality (like `plot.lm`, `plot.gam`, etc). But it's purpose quickly expanded into a tool for data scientists to quickly make pretty `ggplot` diagnostic graphics combined with providing students and data scientists the data frames to create modifications of the graphics and more. 
+*For examples of visuals see the [example section](examples).*
 
-We hope that this package can help introductory `R` coding and data science in `R` classes would start with `ggplot2` based graphics and `tidyverse` based syntax (or at least also include presentation of `tidyverse` tools especially `mutate`, `group_by/summarize`, `pull/select`, `melt`, and `dcast`).
+## Structure
 
-We note that the "creation of desired data frame" follows along the ideas of the `broom` package. If we can use the `broom` version we will, but otherwise we're create a new function for our analysis.
+`ggDiagnose` consists of 3 major functions; `ggDiagnose`, `ggVis` and `dfCompile`.
 
-## Philosophical Package Setup
+The first 2, `ggDiagnose` and `ggVis` proivde `ggplot` graphics similar to what the base `plot` function would provide for the specific `R` objects. `ggDiagnose` does so for statistical model objects and `ggVis` does so for other objects.
 
-The user of this package is encouraged to think of the package as consisting of only 3 functions.
+`dfCompile` provides the user with a data frame that could be used to create the `ggDiagnose` and/or `ggVis` graphics for that specific object (or at least the vast majority of the graphic/graphics). This function is similar to `broom`'s `augment` and `tidy` functions.
 
-+ `ggDiagnose`
-+ `dfCompile`
-+ `ggVis`
+## Philosophy
 
-Each function will check the provided object (`x`) and assess whether there is a function that can work with that object. 
+This package was developed to encourage more students (and Professor's teaching `R`) to work with `tidyverse` / `ggplot2` paradigm when learning Statistical Machine Learning tools. Additionally, it quickly became a focus to also tailor this package to data scientists, providing quick and quality `ggplot2` versions of diagnostic graphics for presentations and data scientists work flow.
 
-Both `ggDiagnose` and `ggVis` can be thought of as `ggplot` versions of `plot` but `ggDiagnose` is for models and `ggVis` is for other objects. `dfCompile` creates the main data frame used to create the graphics for the given object.
+We include `dfCompile`, which is similar to `broom`'s `augment` and `tidy` functions to assist students and data scientistis in building graphics to their linking (either from the ground-up or updating provided graphics). In addition we hope that access to the "raw" data would encourage students to get a better understanding of what is going underneath the hood (in terms of `tidyverse` and `gglot2` paradigms).
 
-## Installation:
+# Installation
+
+To install this function, just do the following:
 
 ```{r}
 library(devtools)
 devtools::install_github("benjaminleroy/ggDiagnose")
 ```
 
-This package **requires** very few packages and will tell you when you don't have the necessary additional packages depending upon what objects you're dealing with.
+This package **requires** very few packages; if depndencies are required for a specific object's functions, the user is prompted to install such packages.
 
-## Thoughts on package development and request for contributions
+# Future of the Package
 
-We hope that this continues to grow and add value to more and more individuals by continuing to expand the number of objects it is able to assess. 
+This package was envisioned as a package that would naturally grow to meet the needs of the users. As such, please (1) feel free to create an issue to request `ggDiagnose`/`ggVis` functionality for `R` objects and (2) develop these missing modules and submit a merge request to improve the package.
 
-### Commentary
 
-All `ggDiagnose` functions need an `x`,  `show_plot`, and `return` parameters. `x` is the object of interest, and the other 2 are logical values if the individual wishes to show the plot(s) and return the data frame that created the plot(s) and a list of plots / the plot object. 
+# TODO:
 
-All `dfCompile` functions need an `x` object, and should return a data frame that can help easily create most if not all of the graphic in `ggDiagnose` of `ggVis`.
-
-### Imports vs Suggest:
-Because this package will continue to grow and create diagnostics and visuals for more and more complicated objects we will only be requiring a limited number of objects and will be using the function `look_for_missing_packages` from `utilities.R` to see if additional packages are needed to download. See `ggDiagnose.lm`'s first couple of lines for recommended approach.  
-
-## TODO:
-
-overarching:
+Overarching (when making new object functionality):
 
 - [ ] 1. check what broom does for each object. Document when broom doesn't create what we need for the visualizations.
 
 `ggDiagnose` (models):
 
 - [x] 1. lm, glm (from `stats` package): `ggDiagnose.lm`
-- [ ] 2. Gam (from the original `gam` package - not `mgcv` - or at least not first round) 
+- [x] 2. Gam (from the original `gam` package - not `mgcv` - or at least not first round) 
 - [x] 3. glmnet (from `glmnet` packages): `ggDiagnose.glmnet`, `ggDiagnose.cv.glmnet`
-    - [ ] plot.mrelnet, plot.multnet needed
+    - [ ] plot.mrelnet, plot.multnet needed?
 - [ ] 4. trees
 - [ ] 5. randomForest
 
@@ -63,24 +60,25 @@ overarching:
 - [ ] 2. dendrogram
 - [ ] 3. matrix (for heatmap?)
 
-clean-up:
-
-- [ ] 1. `ggDiagnose.lm`: try to make code cleaner in terms of creation of data (back away from direct replication)
 
 teaching:
 
-- [ ] 1. In examples for each function provide code to create some / all of the plots in a more basic manner with straight use of `tidyverse`
+- [ ] 1. In examples for each function provide code to create some / all of the plots in a more basic manner with straight use of `tidyverse`. (Is this worthwhile? maybe fore non-trivial/non standard `ggplot` graphics?)
 
 best coding practices:
 
-- [ ] decide which parameters are passed to the visualization functions and how they differ / are the same of the `plot` implimentation.
+- [ ] 1. decide which parameters are passed to the visualization functions and how they differ / are the same of the `plot` implimentation.
 
-## Examples
+ documentation:
 
-### `ggDiagnose.lm` (for an `lm` object.)
+- [ ] 1. create a new file for package documentation. See: http://r-pkgs.had.co.nz/man.html#man-packages
+
+# Examples
+
+## `ggDiagnose.lm` (for an `lm` object.)
 
 ```{r}
-lm_object <- lm(Sepal.Length ~., data = iris)
+lm.object <- lm(Sepal.Length ~., data = iris)
 ```
 
 
@@ -88,7 +86,7 @@ The original visualization:
 
 ```{r}
 par(mfrow = c(2,3))
-plot(lm_object, which = 1:6)
+plot(lm.object, which = 1:6)
 ```
 
 ![](images/base_lm.jpeg)
@@ -96,7 +94,7 @@ plot(lm_object, which = 1:6)
 The updated visualization:
 
 ```{r}
-ggDiagnose(lm_object, which = 1:6)
+ggDiagnose(lm.object, which = 1:6)
 ```
 ![](images/ggDiagnose_lm.jpeg)
 
@@ -106,20 +104,21 @@ ggDiagnose(lm_object, which = 1:6)
 
 ```{r}
 library(glmnet)
-glmnet_object <- cv.glmnet(y = iris$Sepal.Length, 
+glmnet.object <- cv.glmnet(y = iris$Sepal.Length, 
                            x = model.matrix(Sepal.Length~., data = iris))
 ```
 
 The original visualization:
 
 ```{r}
-plot(glmnet_object)
+plot(glmnet.object)
 ```
 
 ![](images/base_glmnet.jpeg)
+The updated visualization:
 
 ```{r}
-ggDiagnose(glmnet_object)
+ggDiagnose(glmnet.object)
 ```
 
 ![](images/ggDiagnose_glmnet.jpeg)
@@ -127,23 +126,51 @@ ggDiagnose(glmnet_object)
 ### `ggDiagnose.cv.glmnet`
 
 ```{r}
-cv_glmnet_object <- cv.glmnet(y = iris$Sepal.Length, 
+cv.glmnet.object <- cv.glmnet(y = iris$Sepal.Length, 
                               x = model.matrix(Sepal.Length~., data = iris))
 ```
 
 The original visualization:
 
 ```{r}
-plot(cv_glmnet_object)
+plot(cv.glmnet.object)
 ```
 
 ![](images/base_cv_glmnet.jpeg)
+The updated visualization:
 
 ```{r}
-ggDiagnose(cv_glmnet_object)
+ggDiagnose(cv.glmnet.object)
 ```
 
 ![](images/ggDiagnose_cv_glmnet.jpeg)
+
+## ggDiagnose.Gam
+
+```{r}
+library(gam)
+gam.object <- gam::gam(Sepal.Length ~ gam::s(Sepal.Width) + Species,
+                  data = iris)
+```
+
+The original visualization:
+
+```{r}
+par(mfrow = c(1,2))
+plot(gam.object, se = TRUE, residuals = TRUE)
+```
+
+![](images/base_Gam.jpeg)
+
+The updated visualization:
+
+
+```{r}
+ggDiagnose(gam.object, residuals = TRUE) # se = TRUE by default
+
+```
+
+![](images/ggDiagnose_Gam.jpeg)
 
 ## things to look into:
 
@@ -158,13 +185,6 @@ write a blog post about putting a changing axis on top, link to the one where th
 3. check return options for ggDiagnose
 
 
-## needs for documentation:
-
-pearson residuals (lm.R)
-
-create a new file for package documentation.
-
-see: http://r-pkgs.had.co.nz/man.html#man-packages
 
 ## readme needs:
 

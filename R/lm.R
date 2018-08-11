@@ -501,8 +501,8 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
 #'   )}
 #'   \item{.sqrt.abs.resid}{the square-root of the absolute value of the
 #'   standardized residuals}
-#'   \item{.pearson.resid}{pearson residuals, residuals weighted using the
-#'   pearson formula NOTE: GIVE BETTER DESCRIPTION}
+#'   \item{.pearson.resid}{pearson residuals, residuals divided by the square
+#'   root the variance}
 #'   \item{.std.pearson.resid}{standardized pearson residuals, (i.e.
 #'   \eqn{\frac{\code{.pearson.resid}}{std.deviation * (1- \code{.leverage})}})}
 #'   \item{.logit.leverage}{logit of the leverage
