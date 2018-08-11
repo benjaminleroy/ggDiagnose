@@ -46,7 +46,7 @@ Overarching (when making new object functionality):
 - [x] 2. `Gam` (from the original `gam` package - not `mgcv` - or at least not first round) 
 - [x] 3. `glmnet` (from `glmnet` packages): `ggDiagnose.glmnet`, `ggDiagnose.cv.glmnet`
     - [ ] `plot.mrelnet`, `plot.multnet needed`?
-- [ ] 4. `trees`
+- [x] 4. `tree` (from `tree` package - could also one from `rpart` package - use `ggdendro` and (see examples)[https://cran.r-project.org/web/packages/ggdendro/vignettes/ggdendro.html].
 - [ ] 5. `randomForest`
 
 `ggVis` (other objects):
@@ -70,7 +70,17 @@ best coding practices:
 
 # Examples
 
-## `ggDiagnose.lm` (for an `lm` object, function works for `glm` and `rlm` objects as well.)
+Links to examples:
+
++ [`ggDiagnose.lm`](#ggdiagnose.lm)
++ [`ggDiagnose.glmnet`](#ggdiagnose.glmnet)
++ [`ggDiagnose.cv.glmnet`](#ggdiagnose.cv.glmnet)
++ [`ggDiagnose.Gam`](#ggdiagnose.gam)
++ [`ggDiagnose.tree`](#ggdiagnose.tree)
+
+## `ggDiagnose.lm` 
+
+This example is for an `lm` object, function works for `glm` and `rlm` objects as well.
 
 ```{r}
 lm.object <- lm(Sepal.Length ~., data = iris)
@@ -166,6 +176,41 @@ ggDiagnose(gam.object, residuals = TRUE) # se = TRUE by default
 ```
 
 ![](images/ggDiagnose_Gam.jpeg)
+
+## ggDiagnose.tree
+
+Note, for more perfect replication of the base `plot` function add `+ ggdendro::theme_dendro()` which drops all ggplot background elements.
+
+```{r}
+library(tree)
+
+tree.object <- tree(Sepal.Length ~., data = iris)
+```
+
+The original visualization:
+
+```{r}
+plot(tree.object)
+```
+
+![](images/base_tree.jpeg)
+
+The updated visualization (followed by quick improvement):
+
+```{r}
+ggDiagnose(tree.object, split.labels = FALSE)
+```
+
+![](images/ggDiagnose_tree.jpeg)
+
+
+```{r}
+ggDiagnose(tree.object, split.labels = TRUE,
+           leaf.labels = TRUE)
+```
+
+![](images/ggDiagnose_tree_labels.jpeg)
+
 
 ## things to look into:
 

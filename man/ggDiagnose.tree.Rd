@@ -5,7 +5,7 @@
 \title{Diagnostic plot for \code{tree} object (\code{ggplot2} based)}
 \usage{
 ggDiagnose.tree(x, type = c("proportional", "uniform"), split.labels = TRUE,
-  node.labels = FALSE, text.size = 3, ..., show.plot = TRUE,
+  leaf.labels = FALSE, text.size = 3, ..., show.plot = TRUE,
   return = FALSE)
 }
 \arguments{
@@ -18,7 +18,7 @@ in impurity.}
 \item{split.labels}{if TRUE (the default), non-leaf nodes are labeled with
 splitting rule}
 
-\item{node.labels}{if TRUE, leaves are labeled with predicted value
+\item{leaf.labels}{if TRUE, leaves are labeled with predicted value
 (the default is FALSE).}
 
 \item{text.size}{integer size for \code{link[ggplot2]{geom_text}} for labels.}

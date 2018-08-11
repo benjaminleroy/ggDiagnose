@@ -65,3 +65,25 @@ jpeg(filename = paste0("ggDiagnose_Gam.jpeg"),
 ggDiagnose(gam.object, residuals = TRUE) # se = TRUE by default
 dev.off()
 
+
+## ggDiagnose.tree
+library(tree)
+
+tree.object <- tree(Sepal.Length ~., data = iris)
+
+jpeg(filename = paste0("base_tree.jpeg"),
+     width = 10, height = 6.5, units = "in", res = 100)
+plot(tree.object)
+dev.off()
+
+jpeg(filename = paste0("ggDiagnose_tree.jpeg"),
+     width = 10, height = 6.5, units = "in", res = 100)
+ggDiagnose(tree.object, split.labels = FALSE) # check out quick labeling options
+# with ?ggDiagnose.tree
+dev.off()
+
+jpeg(filename = paste0("ggDiagnose_tree_labels.jpeg"),
+     width = 10, height = 6.5, units = "in", res = 100)
+ggDiagnose(tree.object, split.labels = TRUE,
+           leaf.labels = TRUE)
+dev.off()

@@ -13,7 +13,7 @@
 #' in impurity.
 #' @param split.labels if TRUE (the default), non-leaf nodes are labeled with
 #' splitting rule
-#' @param node.labels if TRUE, leaves are labeled with predicted value
+#' @param leaf.labels if TRUE, leaves are labeled with predicted value
 #' (the default is FALSE).
 #' @param text.size integer size for \code{link[ggplot2]{geom_text}} for labels.
 #' @param ... extra attributes (currently not used)
@@ -37,7 +37,7 @@
 #'
 #' ggDiagnose.tree(tree, split.labels = FALSE)
 ggDiagnose.tree <- function(x, type = c("proportional", "uniform"),
-                            split.labels = TRUE, node.labels = FALSE,
+                            split.labels = TRUE, leaf.labels = FALSE,
                             text.size = 3,
                             ...,
                             show.plot = TRUE, return = FALSE) {
@@ -55,8 +55,15 @@ ggDiagnose.tree <- function(x, type = c("proportional", "uniform"),
   ggout <- ggplot2::ggplot() +
     ggplot2::geom_segment(data = compiled.df.list$segments,
                           ggplot2::aes(x = x, y = y,
-                                       xend = xend, yend = yend)) +
-    ggdendro::theme_dendro()
+                                       xend = xend, yend = yend))
+
+  if (type[1] != "uniform") {
+    ggout <- ggout + labs(y = "Decrease in Impurity",
+                          x = "")
+  } else {
+    ggout <- ggout + labs(y = "Depth",
+                          x = "")
+  }
 
   if (split.labels) {
     ggout <- ggout + ggplot2::geom_text(data = compiled.df.list$labels,
@@ -65,8 +72,8 @@ ggDiagnose.tree <- function(x, type = c("proportional", "uniform"),
                                         vjust = 0, size = text.size)
   }
 
-  if (node.labels) {
-    ggout <- ggout + ggplot2::geom_label(data = compiled.df.list$leaf_labels,
+  if (leaf.labels) {
+    ggout <- ggout + ggplot2::geom_text(data = compiled.df.list$leaf_labels,
                                         ggplot2::aes(x = x, y = y,
                                                      label = label),
                                         vjust = 1, size = text.size)
