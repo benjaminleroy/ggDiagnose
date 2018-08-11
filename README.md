@@ -1,13 +1,8 @@
----
-output:
-  html_document: default
-  pdf_document: default
----
 # ggDiagnose
 
 This package is geared towards Data Scientists, Students and the broader Statistics Coummunity who increasingly use `ggplot` and `tidyverse` tools to explore and visualize their data. In this package we provide functions that create `ggplot` based visualizations that can replace the base `plot` function to diagnose and visualize `R` objects.
 
-*For examples of visuals see the [example section](examples).*
+*For examples of visuals see the [example section](#examples).*
 
 ## Structure
 
