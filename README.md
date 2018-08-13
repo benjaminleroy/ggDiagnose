@@ -45,6 +45,7 @@ Links to examples:
 + [`ggDiagnose.cv.glmnet`](#ggdiagnosecvglmnet)
 + [`ggDiagnose.Gam`](#ggdiagnosegam)
 + [`ggDiagnose.tree`](#ggdiagnosetree)
++ ... more to come ... 
 
 **dfCompile**
 
@@ -53,6 +54,7 @@ Links to examples:
 + [`dfCompile.cv.glmnet`](#dfcompilecvglmnet)
 + [`dfCompile.Gam`](#dfcompilegam)
 + [`dfCompile.tree`](#dfcompiletree)
++ ... more to come ... 
 
 ## `ggDiagnose`
 
