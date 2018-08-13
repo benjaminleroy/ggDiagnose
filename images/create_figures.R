@@ -15,6 +15,10 @@ jpeg(filename = paste0("ggDiagnose_lm.jpeg"),
 ggDiagnose(lm.object, which = 1:6)
 dev.off()
 
+# "1234567890123456789012345678901234567890123456789012345678901234567890123456"
+# dfCompile(lm.object) %>% head(2)
+# dfCompile(lm.object) %>% names
+
 ## ggDiagnose.glmnet
 
 library(glmnet)
@@ -32,6 +36,9 @@ jpeg(filename = paste0("ggDiagnose_glmnet.jpeg"),
 ggDiagnose(glmnet.object)
 dev.off()
 
+# dfCompile(glmnet.object) %>% head(2)
+# dfCompile(glmnet.object) %>% names
+
 
 ## ggDiagnose.cv.glmnet
 
@@ -47,6 +54,10 @@ jpeg(filename = paste0("ggDiagnose_cv_glmnet.jpeg"),
      width = 10, height = 6.5, units = "in", res = 100)
 ggDiagnose(cv.glmnet.object)
 dev.off()
+
+# dfCompile(cv.glmnet.object) %>% names
+# dfCompile(cv.glmnet.object) %>% head(2)
+
 
 
 ## ggDiagnose.Gam
@@ -64,6 +75,9 @@ jpeg(filename = paste0("ggDiagnose_Gam.jpeg"),
      width = 10, height = 6.5, units = "in", res = 100)
 ggDiagnose(gam.object, residuals = TRUE) # se = TRUE by default
 dev.off()
+
+# dfCompile(gam.object) %>% names
+# dfCompile(gam.object) %>% head(2)
 
 
 ## ggDiagnose.tree
@@ -87,3 +101,8 @@ jpeg(filename = paste0("ggDiagnose_tree_labels.jpeg"),
 ggDiagnose(tree.object, split.labels = TRUE,
            leaf.labels = TRUE)
 dev.off()
+
+# dfCompile(tree.object) %>% length
+# dfCompile(tree.object)$segments %>% head
+# dfCompile(tree.object)$labels %>% head
+# dfCompile(tree.object)$leaf_labels %>% head

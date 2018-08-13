@@ -22,7 +22,7 @@ We include `dfCompile`, which is similar to `broom`'s `augment` and `tidy` funct
 
 To install this function, just do the following:
 
-```{r}
+```r
 library(devtools)
 devtools::install_github("benjaminleroy/ggDiagnose")
 ```
@@ -79,24 +79,36 @@ best coding practices:
 
 Links to examples:
 
+**`ggDiagnose`**
+
 + [`ggDiagnose.lm`](#ggdiagnoselm)
 + [`ggDiagnose.glmnet`](#ggdiagnoseglmnet)
 + [`ggDiagnose.cv.glmnet`](#ggdiagnosecvglmnet)
 + [`ggDiagnose.Gam`](#ggdiagnosegam)
 + [`ggDiagnose.tree`](#ggdiagnosetree)
 
-## `ggDiagnose.lm` 
+**dfCompile**
+
++ [`dfCompile.lm`](#dfcompilelm)
++ [`dfCompile.glmnet`](#dfcompileglmnet)
++ [`dfCompile.cv.glmnet`](#dfcompilecvglmnet)
++ [`dfCompile.Gam`](#dfcompilegam)
++ [`dfCompile.tree`](#dfcompiletree)
+
+## ggDiagnose
+
+### `ggDiagnose.lm` 
 
 This example is for an `lm` object, function works for `glm` and `rlm` objects as well.
 
-```{r}
+```r
 lm.object <- lm(Sepal.Length ~., data = iris)
 ```
 
 
 The original visualization:
 
-```{r}
+```r
 par(mfrow = c(2,3))
 plot(lm.object, which = 1:6)
 ```
@@ -105,7 +117,7 @@ plot(lm.object, which = 1:6)
 
 The updated visualization:
 
-```{r}
+```r
 ggDiagnose(lm.object, which = 1:6)
 ```
 ![](images/ggDiagnose_lm.jpeg)
@@ -114,7 +126,7 @@ ggDiagnose(lm.object, which = 1:6)
 
 ### `ggDiagnose.glmnet`
 
-```{r}
+```r
 library(glmnet)
 glmnet.object <- cv.glmnet(y = iris$Sepal.Length, 
                            x = model.matrix(Sepal.Length~., data = iris))
@@ -122,14 +134,14 @@ glmnet.object <- cv.glmnet(y = iris$Sepal.Length,
 
 The original visualization:
 
-```{r}
+```r
 plot(glmnet.object)
 ```
 
 ![](images/base_glmnet.jpeg)
 The updated visualization:
 
-```{r}
+```r
 ggDiagnose(glmnet.object)
 ```
 
@@ -137,21 +149,21 @@ ggDiagnose(glmnet.object)
 
 ### `ggDiagnose.cv.glmnet`
 
-```{r}
+```r
 cv.glmnet.object <- cv.glmnet(y = iris$Sepal.Length, 
                               x = model.matrix(Sepal.Length~., data = iris))
 ```
 
 The original visualization:
 
-```{r}
+```r
 plot(cv.glmnet.object)
 ```
 
 ![](images/base_cv_glmnet.jpeg)
 The updated visualization:
 
-```{r}
+```r
 ggDiagnose(cv.glmnet.object)
 ```
 
@@ -159,7 +171,7 @@ ggDiagnose(cv.glmnet.object)
 
 ## ggDiagnose.Gam
 
-```{r}
+```r
 library(gam)
 gam.object <- gam::gam(Sepal.Length ~ gam::s(Sepal.Width) + Species,
                   data = iris)
@@ -167,7 +179,7 @@ gam.object <- gam::gam(Sepal.Length ~ gam::s(Sepal.Width) + Species,
 
 The original visualization:
 
-```{r}
+```r
 par(mfrow = c(1,2))
 plot(gam.object, se = TRUE, residuals = TRUE)
 ```
@@ -177,7 +189,7 @@ plot(gam.object, se = TRUE, residuals = TRUE)
 The updated visualization:
 
 
-```{r}
+```r
 ggDiagnose(gam.object, residuals = TRUE) # se = TRUE by default
 
 ```
@@ -188,7 +200,7 @@ ggDiagnose(gam.object, residuals = TRUE) # se = TRUE by default
 
 Note, for more perfect replication of the base `plot` function add `+ ggdendro::theme_dendro()` which drops all ggplot background elements.
 
-```{r}
+```r
 library(tree)
 
 tree.object <- tree(Sepal.Length ~., data = iris)
@@ -196,7 +208,7 @@ tree.object <- tree(Sepal.Length ~., data = iris)
 
 The original visualization:
 
-```{r}
+```r
 plot(tree.object)
 ```
 
@@ -204,20 +216,181 @@ plot(tree.object)
 
 The updated visualization (followed by quick improvement):
 
-```{r}
+```r
 ggDiagnose(tree.object, split.labels = FALSE)
 ```
 
 ![](images/ggDiagnose_tree.jpeg)
 
 
-```{r}
+```r
 ggDiagnose(tree.object, split.labels = TRUE,
            leaf.labels = TRUE)
 ```
 
 ![](images/ggDiagnose_tree_labels.jpeg)
 
+## `dfCompile`
+
+### `dfCompile.lm`
+
+```r
+> lm.object <- lm(Sepal.Length ~., data = iris)
+```
+
+```r
+> dfCompile(lm.object) %>% names
+ [1] "Sepal.Length"          "Sepal.Width"           "Petal.Length"         
+ [4] "Petal.Width"           "Species"               ".index"               
+ [7] ".labels.id"            ".weights"              ".yhat"                
+[10] ".resid"                ".leverage"             ".cooksd"              
+[13] ".weighted.resid"       ".std.resid"            ".sqrt.abs.resid"      
+[16] ".pearson.resid"        ".std.pearson.resid"    ".logit.leverage"      
+[19] ".ordering.resid"       ".ordering.std.resid"   ".ordering.cooks"      
+[22] ".non.extreme.leverage"
+```
+
+```r
+> dfCompile(lm.object) %>% head(2)
+  Sepal.Length Sepal.Width Petal.Length Petal.Width Species .index .labels.id
+1          5.1         3.5          1.4         0.2  setosa      1          1
+2          4.9         3.0          1.4         0.2  setosa      2          2
+  .weights    .yhat     .resid  .leverage      .cooksd .weighted.resid
+1        1 5.004788 0.09521198 0.02131150 0.0003570856      0.09521198
+2        1 4.756844 0.14315645 0.03230694 0.0012517183      0.14315645
+  .std.resid .sqrt.abs.resid .pearson.resid .std.pearson.resid .logit.leverage
+1  0.3136729       0.5600651     0.09521198          0.3136729      0.02177557
+2  0.4742964       0.6886918     0.14315645          0.4742964      0.03338553
+  .ordering.resid .ordering.std.resid .ordering.cooks .non.extreme.leverage
+1             115                 115             124                  TRUE
+2              98                  98              96                  TRUE
+```
+
+### `dfCompile.glmnet`
+
+```r
+> library(glmnet)
+> glmnet.object <- glmnet(y = iris$Sepal.Length,
+                 x = model.matrix(Sepal.Length~., data = iris))
+```
+
+```r
+> dfCompile(glmnet.object) %>% names
+[1] ".log.lambda"      "variable"         "beta.value"       ".norm"           
+[5] ".dev"             ".number.non.zero"
+```
+
+```r
+> dfCompile(glmnet.object) %>% head(2)
+  .log.lambda     variable beta.value      .norm      .dev .number.non.zero
+1  -0.3292550 X.Intercept.          0 0.00000000 0.0000000                0
+2  -0.4222888 X.Intercept.          0 0.03632753 0.1290269                1
+```
+
+### `dfCompile.cv.glmnet`
+
+```r
+> library(glmnet)
+> cv.glmnet.object <- cv.glmnet(y = iris$Sepal.Length,
+                                x = model.matrix(Sepal.Length~., data = iris))
+```
+
+```r
+> dfCompile(cv.glmnet.object) %>% names
+[1] "cross.validated.error"        "cross.validation.upper.error"
+[3] "cross.validation.lower.error" "number.non.zero"             
+[5] ".log.lambda"
+```
+
+```r
+> dfCompile(cv.glmnet.object) %>% head(2)
+   cross.validated.error cross.validation.upper.error
+s0             0.6840064                    0.7340895
+s1             0.6009296                    0.6487392
+   cross.validation.lower.error number.non.zero .log.lambda
+s0                    0.6339234               0  -0.3292550
+s1                    0.5531200               1  -0.4222888
+```
+
+### `dfCompile.Gam`
+
+```r
+> library(gam)
+> gam.object <- gam::gam(Sepal.Length ~ gam::s(Sepal.Width) + Species,
+                         data = iris)
+```
+
+```r
+> dfCompile(gam.object) %>% names
+ [1] "Sepal.Length"                       
+ [2] "Sepal.Width"                        
+ [3] "Petal.Length"                       
+ [4] "Petal.Width"                        
+ [5] "Species"                            
+ [6] ".resid"                             
+ [7] ".smooth.gam.s.Sepal.Width."         
+ [8] ".smooth.Species"                    
+ [9] ".se.smooth.gam.s.Sepal.Width..upper"
+[10] ".se.smooth.Species.upper"           
+[11] ".se.smooth.gam.s.Sepal.Width..lower"
+[12] ".se.smooth.Species.lower"  
+```
+
+```r
+> dfCompile(gam.object) %>% head(2)
+  Sepal.Length Sepal.Width Petal.Length Petal.Width Species     .resid
+1          5.1         3.5          1.4         0.2  setosa 0.03614362
+2          4.9         3.0          1.4         0.2  setosa 0.23792407
+  .smooth.gam.s.Sepal.Width. .smooth.Species
+1                 0.35570963       -1.135187
+2                -0.04607082       -1.135187
+  .se.smooth.gam.s.Sepal.Width..upper .se.smooth.Species.upper
+1                          0.44985507                -1.006952
+2                         -0.03387729                -1.006952
+  .se.smooth.gam.s.Sepal.Width..lower .se.smooth.Species.lower
+1                          0.26156418                -1.263422
+2                         -0.05826436                -1.263422
+```
+
+### `dfCompile.tree`
+
+```r
+> library(gam)
+> gam.object <- gam::gam(Sepal.Length ~ gam::s(Sepal.Width) + Species,
+                         data = iris)
+```
+
+```r
+> dfCompile(tree.object) %>% length
+[1] 4
+
+> dfCompile(tree.object)$segments %>% head
+     .x       .y .xend     .yend .n
+2 2.250 39.49191 2.250 102.16833 73
+3 1.500 33.64903 1.500  39.49191 53
+4 1.000 31.29592 1.000  33.64903 20
+5 2.000 31.29592 2.000  33.64903 33
+6 3.000 33.64903 3.000  39.49191 20
+7 6.125 39.49191 6.125 102.16833 77
+
+> dfCompile(tree.object)$labels %>% head
+      .x        .y            .label
+1 4.1875 102.16833 Petal.Length<4.25
+2 2.2500  39.49191  Petal.Length<3.4
+3 1.5000  33.64903  Sepal.Width<3.25
+4 6.1250  39.49191 Petal.Length<6.05
+5 5.2500  27.04709 Petal.Length<5.15
+6 4.5000  24.00201  Sepal.Width<3.05
+
+> dfCompile(tree.object)$leaf_labels %>% head
+   .x       .y .label    .yval
+4   1 31.29592   4.74 4.735000
+5   2 31.29592   5.17 5.169697
+6   3 33.64903   5.64 5.640000
+10  4 22.26715   6.05 6.054545
+11  5 22.26715   6.53 6.530000
+12  6 24.00201   6.60 6.604000
+```
 
 ## things to look into:
 

@@ -134,8 +134,12 @@ dfCompile.tree <- function(x, type = c("proportional", "uniform")){
 
   data_out <- ggdendro::dendro_data(x, type)
 
+  names(data_out$labels) <- paste0(".", names(data_out$labels))
+  names(data_out$leaf_labels) <- paste0(".", names(data_out$labels))
+  names(data_out$segments) <- paste0(".", names(data_out$labels))
+
   data_out$labels <- data_out$labels %>%
-    mutate(label = paste0(label,frame_splits$splits[,"cutleft"]))
+    mutate(.label = paste0(.label,frame_splits$splits[,"cutleft"]))
 
   return(data_out)
 }
