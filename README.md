@@ -1,6 +1,6 @@
 # ggDiagnose
 
-This package is geared towards data scientists, statistics students and the broader statistics community who increasingly use `ggplot2` and `tidyverse` tools to explore and visualize their data. In this package we provide functions that create `ggplot2` based visualizations that can replace the base `plot` function to diagnose and visualize `R` objects.
+This package is geared towards data scientists, statistics students and the broader statistics community who increasingly use `ggplot2` and `tidyverse` tools to explore and visualize their data. In this package we provide functions that create `ggplot2` based visualizations that can replace the base `plot` function to diagnose and visualize `R` objects. Specifically, this package aims to provide visualation tools when these objects are model objects and other non-traditional (read: non-`data frame`) based objects.
 
 *For examples of visuals see the [example section](#examples).*
 
@@ -46,15 +46,22 @@ Overarching (when making new object functionality):
 - [x] 2. `Gam` (from the original `gam` package - not `mgcv` - or at least not first round) 
 - [x] 3. `glmnet` (from `glmnet` packages): `ggDiagnose.glmnet`, `ggDiagnose.cv.glmnet`
     - [ ] `plot.mrelnet`, `plot.multnet needed`?
-- [x] 4. `tree` (from `tree` package - could also one from `rpart` package - use `ggdendro` and [see examples](https://cran.r-project.org/web/packages/ggdendro/vignettes/ggdendro.html).
+- [x] 4. `tree` (from `tree` package - could also one from `rpart` package - use `ggdendro` and [see examples from `ggdendro`](https://cran.r-project.org/web/packages/ggdendro/vignettes/ggdendro.html).
 - [ ] 5. `randomForest`
+- [ ] 6. `mclust` (multiple objects - multiple options for `Mclust` graphic. - will take time)
+- [ ] 7. PCA/factor analysis, etc objects
+- [ ] 8. look at CMU 402 for more packages
 
 `ggVis` (other objects):
 
 - [ ] 1. `sp`
 - [ ] 2. `dendrogram`
-- [ ] 3. `matrix` (for `heatmap`?)
+- [ ] 3. `matrix` (for `heatmap`? or `image`?) - let's do both for now.
 
+packages that I'm not sure can be done:
+- [ ] 1. `lme4` (these objects don't seem to have `plot._` functions to emulate.)
+- [ ] 2. `kde2d` - from MASS (actually just produces a list ...) - but `z` could be dealt with a matrix that you want to do "image" to.
+- [ ] 9. `ranger` (better RF package?) (doesn't actually have `plot` function for ranger objects...)
 
 teaching:
 
