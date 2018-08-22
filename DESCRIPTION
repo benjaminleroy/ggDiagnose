@@ -6,11 +6,11 @@ Author: Benjamin LeRoy
 Maintainer: Benjamin LeRoy <benjaminpeterleroy@gmail.com>
 Description: Creates wrappers that mimic base plot functional around objects 
     and creates similar graphics.
-License: What license is it under?
+License: MIT
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
-Requires:
+Imports:
     dplyr,
     ggplot2,
     gridExtra,
