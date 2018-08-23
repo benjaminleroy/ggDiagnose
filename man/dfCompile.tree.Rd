@@ -8,7 +8,11 @@ visuals)}
 dfCompile.tree(x, type = c("proportional", "uniform"))
 }
 \arguments{
-\item{x}{}
+\item{x}{tree object from the package \pkg{tree}}
+
+\item{type}{type of tree visualization you would like back. If "uniform" the
+length for each split is the same, otherwise based on the change of impurity
+("proportional").}
 }
 \value{
 returns a list of 3 data frames, see details

@@ -23,7 +23,7 @@ residuals to be used for constructing the partial residuals.}
 augmented data.frame, see \code{details} for more information
 }
 \description{
-Though a similar idea to \code{\link[broom]{broom::augment}} this returns
+Though a similar idea to \code{broom::}\code{\link[broom]{augment}} this returns
 very different values.
 }
 \details{

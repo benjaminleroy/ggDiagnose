@@ -54,8 +54,8 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
                                          expression("Cook's dist vs Leverage  " * h[ii] / (1 - h[ii]))),
                           sub.caption = NULL, main = NULL,
                           ...,
-                          id.n = 3, labels.id = factor(names(residuals(x)),
-                                                       levels = names(residuals(x))),
+                          id.n = 3, labels.id = factor(names(stat::residuals(x)),
+                                                       levels = names(stat::residuals(x))),
                           qqline = TRUE, cook.levels = c(0.5, 1.0),
                           # new attributes
                           show.plot = TRUE, return = FALSE,
@@ -110,7 +110,7 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
   }
 
   expanded.df <- dfCompile.lm(x, labels.id = labels.id) %>%
-    filter(.weights != 0)
+    dplyr::filter(.weights != 0)
 
   if (any(show[2L:3L])) {
     ylab23 <- ifelse(isGlm,
@@ -203,7 +203,7 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
     if (id.n > 0) {
       qq <- stats::qqnorm(expanded.df$.std.resid,plot.it = FALSE) %>%
         data.frame() %>%
-        mutate(.ordering.resid = expanded.df$.ordering.resid,
+        dplyr::mutate(.ordering.resid = expanded.df$.ordering.resid,
                .labels.id = expanded.df$.labels.id)
 
       ggout.list$qqnorm <- text.id(df = qq,
@@ -239,13 +239,13 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
   }
   if (show[4L]) { ## Cook's Distances
     ggout.list$cooks <- ggplot2::ggplot(expanded.df,
-                                        aes(y = .cooksd,
+                                        ggplot2::aes(y = .cooksd,
                                             x = .index)) +
-      ggplot2::geom_segment(aes(x = .index,
+      ggplot2::geom_segment(ggplot2::aes(x = .index,
                                 xend = .index,
                                 y = 0,
                                 yend = .cooksd)) +
-      ggplot2::theme(axis.text.x = element_text(angle = 90)) +
+      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90)) +
       ggplot2::labs(x = "Observation Number",
                     y = "Cook's distance",
                     title = getCaption(4))
@@ -266,11 +266,11 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
         caption[[5L]] <- "Constant Leverage:\n Residuals vs Factor Levels"
       }
       ## plot against factor-level combinations instead
-      aterms <- attributes(terms(x))
+      aterms <- attributes(stats::terms(x))
       ## classes w/o response
       dcl <- aterms$dataClasses[ -aterms$response ] #
       facvars <- names(dcl)[dcl %in% c("factor", "ordered")]
-      mf <- model.frame(x)[facvars]# better than x$model
+      mf <- stats::model.frame(x)[facvars]# better than x$model
       if (ncol(mf) > 0) {
         dm <- data.matrix(mf)
         ## #{levels} for each of the factors:
@@ -344,7 +344,7 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
           dplyr::mutate(legend = as.character(legend),
                  group = as.character(group))
 
-        p <- length(coef(x))
+        p <- length(stat::coef(x))
 
         hh <- seq.int(min(range.hat[1L], range.hat[2L]/100), range.hat[2L],
                       length.out = 101)
@@ -467,7 +467,7 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
 #' Creates an augmented data frame for lm and glm objects (for \pkg{ggplot2}
 #' visuals)
 #'
-#' Similar to a extended version of \code{\link[broom]{broom::augment}} for \code{lm}
+#' Similar to a extended version of \code{broom::}\code{\link[broom]{augment}} for \code{lm}
 #' and \code{glm} objects but with prepared for the diagnostic plots.
 #'
 #' @param x \code{lm} or \code{glm} object
@@ -523,8 +523,8 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
 #' lm.object <- lm(Sepal.Length ~., data = iris)
 #'
 #' dfCompile.lm(lm.object) %>% head
-dfCompile.lm <- function(x, labels.id = factor(names(residuals(x)),
-                                             levels = names(residuals(x)))) {
+dfCompile.lm <- function(x, labels.id = factor(names(stat::residuals(x)),
+                                             levels = names(stat::residuals(x)))) {
 
   # pkg requirements (for this function)
   missing.packages <- look.for.missing.packages(c("stats"))
@@ -568,7 +568,7 @@ dfCompile.lm <- function(x, labels.id = factor(names(residuals(x)),
                     } else {
                       stats::weights(x)
                     },
-                  .yhat = predict(x), #!= fitted() for glm
+                  .yhat = stat::predict(x), #!= fitted() for glm
                   .resid = stats::residuals(x),
                   .leverage = stats::lm.influence(x, do.coef = FALSE)$hat,
                   .pearson.resid = stats::residuals(x, "pearson")

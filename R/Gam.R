@@ -122,7 +122,7 @@ ggDiagnose.Gam <- function(x,  residuals = NULL, rugplot = TRUE, se = TRUE,
     position = "identity"
   }
 
-  actual.var.names <- sapply(terms,function(x) all.vars(formula(paste("~",x))))
+  actual.var.names <- sapply(terms,function(x) all.vars(stats::formula(paste("~",x))))
 
   completed.df <- dfCompile.Gam(x, residuals = residuals,
                                 terms = terms,...)
@@ -179,7 +179,7 @@ ggDiagnose.Gam <- function(x,  residuals = NULL, rugplot = TRUE, se = TRUE,
         dplyr::distinct()
 
       gglist[[term]] <-
-        ggplot2::ggplot(discrete, aes_string(x = var.name, y = y.name)) +
+        ggplot2::ggplot(discrete, ggplot2::aes_string(x = var.name, y = y.name)) +
         ggplot2::geom_point() +
         ggplot2::labs(y = paste("partial for",term))
 
@@ -233,7 +233,7 @@ ggDiagnose.Gam <- function(x,  residuals = NULL, rugplot = TRUE, se = TRUE,
 #' Creates an augmented data frame for \code{Gam} objects (for \pkg{ggplot2}
 #' visuals)
 #'
-#' Though a similar idea to \code{\link[broom]{broom::augment}} this returns
+#' Though a similar idea to \code{broom::}\code{\link[broom]{augment}} this returns
 #' very different values.
 #'
 #' @param x \code{Gam} object from \code{gam} library
@@ -283,7 +283,7 @@ dfCompile.Gam <- function(x, residuals = NULL, #newdata = NULL,
   }
 
   # residuals
-  Residuals <- resid(x)
+  Residuals <- stats::resid(x)
   if (!is.null(residuals)) {
     if (length(residuals) == 1) {
       residuals <- Residuals # even if "residuals = FALSE"
@@ -295,7 +295,7 @@ dfCompile.Gam <- function(x, residuals = NULL, #newdata = NULL,
 
   output.df <- data.frame(x$data,
                           .resid = residuals)
-  pred <- predict(x, type = "terms", terms = terms,
+  pred <- stats::predict(x, type = "terms", terms = terms,
                   se.fit = TRUE)
 
 

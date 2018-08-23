@@ -41,7 +41,7 @@ ggDiagnose.tree <- function(x, type = c("proportional", "uniform"),
                             text.size = 3,
                             ...,
                             show.plot = TRUE, return = FALSE) {
-  missing.packages <- look.for.missing.packages(c("ggdendro"))
+  missing.packages <- look.for.missing.packages(c("ggdendro", "graphics"))
   # ^also requires ggplot2, base, dyplr
 
   if (length(missing.packages) > 0) {
@@ -58,10 +58,10 @@ ggDiagnose.tree <- function(x, type = c("proportional", "uniform"),
                                        xend = xend, yend = yend))
 
   if (type[1] != "uniform") {
-    ggout <- ggout + labs(y = "Decrease in Impurity",
+    ggout <- ggout + ggplot2::labs(y = "Decrease in Impurity",
                           x = "")
   } else {
-    ggout <- ggout + labs(y = "Depth",
+    ggout <- ggout + ggplot2::labs(y = "Depth",
                           x = "")
   }
 
@@ -80,7 +80,7 @@ ggDiagnose.tree <- function(x, type = c("proportional", "uniform"),
   }
 
   if (show.plot) {
-    plot(ggout)
+    graphics::plot(ggout)
   }
 
   if (return) {
@@ -96,7 +96,10 @@ ggDiagnose.tree <- function(x, type = c("proportional", "uniform"),
 #' \code{\link[ggdendro]{dendro_data}} (look at \code{help(dendro_data.tree)}),
 #' with slight modifications.
 #'
-#' @param x
+#' @param x tree object from the package \pkg{tree}
+#' @param type type of tree visualization you would like back. If "uniform" the
+#' length for each split is the same, otherwise based on the change of impurity
+#' ("proportional").
 #'
 #' @return returns a list of 3 data frames, see details
 #'
@@ -119,7 +122,7 @@ ggDiagnose.tree <- function(x, type = c("proportional", "uniform"),
 #'
 #' for (df.name in names(dfCompile.tree)) print(compile.df.list[["df.name"]])
 dfCompile.tree <- function(x, type = c("proportional", "uniform")){
-  missing.packages <- look.for.missing.packages(c("ggdendro"))
+  missing.packages <- look.for.missing.packages(c("ggdendro", "tree"))
   # ^also requires base, dyplr
 
   if (length(missing.packages) > 0) {

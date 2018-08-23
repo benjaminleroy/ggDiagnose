@@ -226,7 +226,7 @@ ggDiagnose.glmnet <- function(x, xvar = c("norm","lambda","dev"), label = FALSE,
 
   if (label) {
     vis.df.last <- vis.df %>%
-      filter(.log.lambda == min(.log.lambda)) %>%
+      dplyr::filter(.log.lambda == min(.log.lambda)) %>%
       dplyr::mutate(.variable.num = as.numeric(factor(variable,
                                                      levels = rownames(x$beta))))
     }
@@ -246,7 +246,7 @@ ggDiagnose.glmnet <- function(x, xvar = c("norm","lambda","dev"), label = FALSE,
     approx.f <- 1
   }
 
-  ggout <- ggplot2::ggplot(vis.df, aes_string(x = xvar,
+  ggout <- ggplot2::ggplot(vis.df, ggplot2::aes_string(x = xvar,
                             y = "beta.value",
                             color = "variable")) +
     ggplot2::geom_line() + ggplot2::theme(legend.position = "none")  +

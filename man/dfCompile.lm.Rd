@@ -5,8 +5,8 @@
 \title{Creates an augmented data frame for lm and glm objects (for \pkg{ggplot2}
 visuals)}
 \usage{
-dfCompile.lm(x, labels.id = factor(names(residuals(x)), levels =
-  names(residuals(x))))
+dfCompile.lm(x, labels.id = factor(names(stat::residuals(x)), levels =
+  names(stat::residuals(x))))
 }
 \arguments{
 \item{x}{\code{lm} or \code{glm} object}
@@ -17,7 +17,7 @@ dfCompile.lm(x, labels.id = factor(names(residuals(x)), levels =
 augmented data.frame, see \code{details} for more information
 }
 \description{
-Similar to a extended version of \code{\link[broom]{broom::augment}} for \code{lm}
+Similar to a extended version of \code{broom::}\code{\link[broom]{augment}} for \code{lm}
 and \code{glm} objects but with prepared for the diagnostic plots.
 }
 \details{

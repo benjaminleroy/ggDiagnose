@@ -6,7 +6,7 @@ Author: Benjamin LeRoy
 Maintainer: Benjamin LeRoy <benjaminpeterleroy@gmail.com>
 Description: Creates wrappers that mimic base plot functional around objects 
     and creates similar graphics.
-License: MIT
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
@@ -14,7 +14,8 @@ Imports:
     dplyr,
     ggplot2,
     gridExtra,
-    reshape2
+    reshape2,
+    magrittr
 Suggests:
     broom,
     gam,
@@ -22,4 +23,6 @@ Suggests:
     grDevices,
     graphics,
     glmnet,
-    stats
+    stats,
+    tidyverse,
+    tree

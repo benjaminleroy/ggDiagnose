@@ -8,10 +8,11 @@ ggDiagnose.lm(x, which = c(1L:3L, 5L), caption = list("Residuals vs Fitted",
   "Normal Q-Q", "Scale-Location", "Cook's distance", "Residuals vs Leverage",
   expression("Cook's dist vs Leverage  " * h[ii]/(1 - h[ii]))),
   sub.caption = NULL, main = NULL, ..., id.n = 3,
-  labels.id = factor(names(residuals(x)), levels = names(residuals(x))),
-  qqline = TRUE, cook.levels = c(0.5, 1), show.plot = TRUE,
-  return = FALSE, shape = 1, nrow = 2, smooth.color = "blue",
-  dashed.color = c("red", "blue", NA, NA, "red", "black"))
+  labels.id = factor(names(stat::residuals(x)), levels =
+  names(stat::residuals(x))), qqline = TRUE, cook.levels = c(0.5, 1),
+  show.plot = TRUE, return = FALSE, shape = 1, nrow = 2,
+  smooth.color = "blue", dashed.color = c("red", "blue", NA, NA, "red",
+  "black"))
 }
 \arguments{
 \item{x}{\code{lm} or \code{glm} object}
