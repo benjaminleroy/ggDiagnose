@@ -74,7 +74,8 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
   # pkg requirements (for this function)
   missing.packages <- look.for.missing.packages(c("stats",
                                                   "grDevices",
-                                                  "graphics"))
+                                                  "graphics",
+                                                  "scales"))
   # ^also requires ggplot2, base, dyplr, gridExtra
 
   if (length(missing.packages) > 0) {
@@ -531,7 +532,8 @@ dfCompile.lm <- function(x, labels.id = factor(names(stats::residuals(x)),
   .std.resid <- .weights <- .resid <- .cooksd <- .leverage <- NULL
 
   # pkg requirements (for this function)
-  missing.packages <- look.for.missing.packages(c("stats"))
+  missing.packages <- look.for.missing.packages(c("stats",
+                                                  "scales"))
   # ^also requires base, dyplr
 
   if (length(missing.packages) > 0) {
