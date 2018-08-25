@@ -56,6 +56,8 @@ Links to examples:
 + [`dfCompile.tree`](#dfcompiletree)
 + ... more to come ... 
 
+We also provide a `.rmd` file with the same examples runable in Rstudio, which can be found [here](https://raw.githubusercontent.com/benjaminleroy/ggDiagnose/master/rmarkdown_examples/ggDiagnose_examples.rmd), or by just heading to the folder labeled `rmarkdown_examples` and downloading the `ggDiagnose_examples.rmd` file.
+
 ## `ggDiagnose`
 
 ### `ggDiagnose.lm` 
