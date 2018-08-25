@@ -35,12 +35,15 @@
 #'
 #' plot(tree.object)
 #'
-#' ggDiagnose.tree(tree, split.labels = FALSE)
+#' ggDiagnose.tree(tree.object, split.labels = FALSE)
 ggDiagnose.tree <- function(x, type = c("proportional", "uniform"),
                             split.labels = TRUE, leaf.labels = FALSE,
                             text.size = 3,
                             ...,
                             show.plot = TRUE, return = FALSE) {
+  # so that CRAN checks pass
+  .x <- .y <- .xend <- .yend <- .label <- NULL
+
   missing.packages <- look.for.missing.packages(c("ggdendro", "graphics"))
   # ^also requires ggplot2, base, dyplr
 
@@ -54,8 +57,8 @@ ggDiagnose.tree <- function(x, type = c("proportional", "uniform"),
 
   ggout <- ggplot2::ggplot() +
     ggplot2::geom_segment(data = compiled.df.list$segments,
-                          ggplot2::aes(x = x, y = y,
-                                       xend = xend, yend = yend))
+                          ggplot2::aes(x = .x, y = .y,
+                                       xend = .xend, yend = .yend))
 
   if (type[1] != "uniform") {
     ggout <- ggout + ggplot2::labs(y = "Decrease in Impurity",
@@ -64,18 +67,18 @@ ggDiagnose.tree <- function(x, type = c("proportional", "uniform"),
     ggout <- ggout + ggplot2::labs(y = "Depth",
                           x = "")
   }
-
+  browser()
   if (split.labels) {
     ggout <- ggout + ggplot2::geom_text(data = compiled.df.list$labels,
-                                        ggplot2::aes(x = x, y = y,
-                                                     label = label),
+                                        ggplot2::aes(x = .x, y = .y,
+                                                     label = .label),
                                         vjust = 0, size = text.size)
   }
 
   if (leaf.labels) {
     ggout <- ggout + ggplot2::geom_text(data = compiled.df.list$leaf_labels,
-                                        ggplot2::aes(x = x, y = y,
-                                                     label = label),
+                                        ggplot2::aes(x = .x, y = .y,
+                                                     label = .label),
                                         vjust = 1, size = text.size)
   }
 
@@ -88,7 +91,6 @@ ggDiagnose.tree <- function(x, type = c("proportional", "uniform"),
   }
 
   }
-
 #' Creates a list of data frames for \code{tree} objects (for \pkg{ggplot2}
 #' visuals)
 #'
@@ -122,6 +124,10 @@ ggDiagnose.tree <- function(x, type = c("proportional", "uniform"),
 #'
 #' for (df.name in names(dfCompile.tree)) print(compile.df.list[["df.name"]])
 dfCompile.tree <- function(x, type = c("proportional", "uniform")){
+
+  # so that CRAN checks pass
+  .label <- NULL
+
   missing.packages <- look.for.missing.packages(c("ggdendro", "tree"))
   # ^also requires base, dyplr
 
@@ -138,11 +144,11 @@ dfCompile.tree <- function(x, type = c("proportional", "uniform")){
   data_out <- ggdendro::dendro_data(x, type)
 
   names(data_out$labels) <- paste0(".", names(data_out$labels))
-  names(data_out$leaf_labels) <- paste0(".", names(data_out$labels))
-  names(data_out$segments) <- paste0(".", names(data_out$labels))
+  names(data_out$leaf_labels) <- paste0(".", names(data_out$leaf_labels))
+  names(data_out$segments) <- paste0(".", names(data_out$segments))
 
   data_out$labels <- data_out$labels %>%
-    mutate(.label = paste0(.label,frame_splits$splits[,"cutleft"]))
+    dplyr::mutate(.label = paste0(.label,frame_splits$splits[,"cutleft"]))
 
   return(data_out)
 }

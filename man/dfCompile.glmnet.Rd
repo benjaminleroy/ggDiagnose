@@ -37,6 +37,7 @@ data frame returned has the following columns:
 }
 \examples{
 library(tidyverse)
+library(glmnet)
 glmnet.object <- glmnet(y = iris$Sepal.Length,
                         x = model.matrix(Sepal.Length~., data = iris))
 

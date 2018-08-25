@@ -8,12 +8,12 @@
 #'
 #' Inner function "lifted" from \code{gam}.
 #'
-#' @param object \code{Gam} object from package \code{gam}
+#' @param x \code{Gam} object from package \code{gam}
 #' @param ... extra parameters (not used)
 #'
 #' @return term names
-labels.Gam <- function(object, ...){
-  attr(object$terms, "term.labels")
+labels.Gam <- function(x, ...){
+  attr(x$terms, "term.labels")
 }
 
 
@@ -60,7 +60,7 @@ labels.Gam <- function(object, ...){
 #' @export
 #'
 #' @examples
-#' libary(gam)
+#' library(gam)
 #' gam.object <- gam::gam(Sepal.Length ~ gam::s(Sepal.Width) + Species,
 #'                        data = iris)
 #'
@@ -93,9 +93,9 @@ ggDiagnose.Gam <- function(x,  residuals = NULL, rugplot = TRUE, se = TRUE,
   # removing interaction terms for graphics ----------------
   # from orginal function
   # *also collects type of variable (continuous or discrete in mode)
-  Terms <- object$terms
+  Terms <- x$terms
   a <- attributes(Terms)
-  Call <- object$call
+  Call <- x$call
   all.terms <- labels(Terms)
   xvars <- parse(text = all.terms)
   names(xvars) <- all.terms
@@ -222,7 +222,7 @@ ggDiagnose.Gam <- function(x,  residuals = NULL, rugplot = TRUE, se = TRUE,
   }
 
   if (return) {
-    return(list(data = output.df, gglist = gglist))
+    return(list(data = completed.df, gglist = gglist))
   }
 
 }

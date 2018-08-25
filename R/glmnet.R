@@ -26,6 +26,7 @@
 #' @export
 #'
 #' @examples
+#' library(glmnet)
 #' cv.glmnet.object <- cv.glmnet(y = iris$Sepal.Length,
 #'                               x = model.matrix(Sepal.Length~., data = iris))
 #'
@@ -35,6 +36,10 @@
 ggDiagnose.cv.glmnet <- function(x, sign.lambda = 1, color = "red",
                                  dashed.color = "red",
                                  show.plot = TRUE, return = FALSE, ...){
+  # so that CRAN checks pass
+  cross.validated.error <- cross.validation.upper.error <- NULL
+  cross.validation.lower.error <- .log.lambda <- NULL
+  x.line <- NULL
 
   missing.packages <- look.for.missing.packages(c("glmnet"))
   # ^also requires ggplot2
@@ -83,7 +88,7 @@ ggDiagnose.cv.glmnet <- function(x, sign.lambda = 1, color = "red",
       findInterval(as.numeric(ggplot2::ggplot_build(ggout)$layout$panel_params[[1]]$x.labels),
                    expanded.df$.log.lambda[nrow(expanded.df):1])
       ]
-  } else if (sig.lambda == -1) {
+  } else if (sign.lambda == -1) {
     major.breaks <- expanded.df$.log.lambda[
       findInterval(as.numeric(ggplot2::ggplot_build(ggout)$layout$panel_params[[1]]$x.labels),
                                  -1*expanded.df$.log.lambda)
@@ -137,6 +142,8 @@ ggDiagnose.cv.glmnet <- function(x, sign.lambda = 1, color = "red",
 #' same object.
 #'
 #' @examples
+#' library(tidyverse)
+#' library(glmnet)
 #' cv.glmnet.object <- cv.glmnet(y = iris$Sepal.Length,
 #'                               x = model.matrix(Sepal.Length~., data = iris))
 #'
@@ -192,6 +199,8 @@ dfCompile.cv.glmnet <- function(x){
 #' @seealso see \code{\link{dfCompile.glmnet}} for data creation.
 #'
 #' @examples
+#' library(tidyverse)
+#' library(glmnet)
 #' glmnet.object <- glmnet(y = iris$Sepal.Length,
 #'                         x = model.matrix(Sepal.Length~., data = iris))
 #'
@@ -209,6 +218,9 @@ ggDiagnose.glmnet <- function(x, xvar = c("norm","lambda","dev"), label = FALSE,
                   "' needed for this function to work. Please install them/it."),
                 collapse = ""))
   }
+
+  # so that CRAN checks pass
+  .log.lambda <- variable <- xvar <- NULL
 
   xvar <- match.arg(xvar)
   which <- glmnet::nonzeroCoef(x$beta)
@@ -325,11 +337,18 @@ ggDiagnose.glmnet <- function(x, xvar = c("norm","lambda","dev"), label = FALSE,
 #'
 #' @examples
 #' library(tidyverse)
+#' library(glmnet)
 #' glmnet.object <- glmnet(y = iris$Sepal.Length,
 #'                         x = model.matrix(Sepal.Length~., data = iris))
 #'
 #' dfCompile.glmnet(glmnet.object) %>% head
 dfCompile.glmnet <- function(x){
+
+  # so that CRAN checks pass
+  .norm <- .log.lambda <- .dev <- variable <- NULL
+  .number.non.zero <- beta.value <- value <- NULL
+
+
   beta <- as.matrix(x$beta[,,drop = FALSE])
   vis.df <- beta %>% t %>% data.frame %>%
     dplyr::mutate(.norm = apply(abs(beta), 2, sum),

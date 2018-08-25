@@ -5,8 +5,8 @@
 \title{Creates an augmented data frame for lm and glm objects (for \pkg{ggplot2}
 visuals)}
 \usage{
-dfCompile.lm(x, labels.id = factor(names(stat::residuals(x)), levels =
-  names(stat::residuals(x))))
+dfCompile.lm(x, labels.id = factor(names(stats::residuals(x)), levels =
+  names(stats::residuals(x))))
 }
 \arguments{
 \item{x}{\code{lm} or \code{glm} object}

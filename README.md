@@ -89,7 +89,7 @@ ggDiagnose(lm.object, which = 1:6)
 
 ```r
 library(glmnet)
-glmnet.object <- cv.glmnet(y = iris$Sepal.Length, 
+glmnet.object <- glmnet(y = iris$Sepal.Length, 
                            x = model.matrix(Sepal.Length~., data = iris))
 ```
 
@@ -196,6 +196,7 @@ ggDiagnose(tree.object, split.labels = TRUE,
 ### `dfCompile.lm`
 
 ```r
+> library(dplyr)
 > lm.object <- lm(Sepal.Length ~., data = iris)
 ```
 
@@ -212,7 +213,7 @@ ggDiagnose(tree.object, split.labels = TRUE,
 ```
 
 ```r
-> dfCompile(lm.object) %>% head(2)
+> dfCompile(lm.object) %>% head(2) # needs package dplyr for "%>%"
   Sepal.Length Sepal.Width Petal.Length Petal.Width Species .index .labels.id
 1          5.1         3.5          1.4         0.2  setosa      1          1
 2          4.9         3.0          1.4         0.2  setosa      2          2
@@ -236,13 +237,13 @@ ggDiagnose(tree.object, split.labels = TRUE,
 ```
 
 ```r
-> dfCompile(glmnet.object) %>% names
+> dfCompile(glmnet.object) %>% names # needs package dplyr for "%>%"
 [1] ".log.lambda"      "variable"         "beta.value"       ".norm"           
 [5] ".dev"             ".number.non.zero"
 ```
 
 ```r
-> dfCompile(glmnet.object) %>% head(2)
+> dfCompile(glmnet.object) %>% head(2) # needs package dplyr for "%>%"
   .log.lambda     variable beta.value      .norm      .dev .number.non.zero
 1  -0.3292550 X.Intercept.          0 0.00000000 0.0000000                0
 2  -0.4222888 X.Intercept.          0 0.03632753 0.1290269                1
@@ -257,14 +258,14 @@ ggDiagnose(tree.object, split.labels = TRUE,
 ```
 
 ```r
-> dfCompile(cv.glmnet.object) %>% names
+> dfCompile(cv.glmnet.object) %>% names # needs package dplyr for "%>%"
 [1] "cross.validated.error"        "cross.validation.upper.error"
 [3] "cross.validation.lower.error" "number.non.zero"             
 [5] ".log.lambda"
 ```
 
 ```r
-> dfCompile(cv.glmnet.object) %>% head(2)
+> dfCompile(cv.glmnet.object) %>% head(2) # needs package dplyr for "%>%"
    cross.validated.error cross.validation.upper.error
 s0             0.6840064                    0.7340895
 s1             0.6009296                    0.6487392
@@ -282,7 +283,7 @@ s1                    0.5531200               1  -0.4222888
 ```
 
 ```r
-> dfCompile(gam.object) %>% names
+> dfCompile(gam.object) %>% names # needs package dplyr for "%>%"
  [1] "Sepal.Length"                       
  [2] "Sepal.Width"                        
  [3] "Petal.Length"                       
@@ -298,7 +299,7 @@ s1                    0.5531200               1  -0.4222888
 ```
 
 ```r
-> dfCompile(gam.object) %>% head(2)
+> dfCompile(gam.object) %>% head(2) # needs package dplyr for "%>%"
   Sepal.Length Sepal.Width Petal.Length Petal.Width Species     .resid
 1          5.1         3.5          1.4         0.2  setosa 0.03614362
 2          4.9         3.0          1.4         0.2  setosa 0.23792407
@@ -322,10 +323,10 @@ s1                    0.5531200               1  -0.4222888
 ```
 
 ```r
-> dfCompile(tree.object) %>% length
+> dfCompile(tree.object) %>% length # needs package dplyr for "%>%"
 [1] 4
 
-> dfCompile(tree.object)$segments %>% head
+> dfCompile(tree.object)$segments %>% head # needs package dplyr for "%>%"
      .x       .y .xend     .yend .n
 2 2.250 39.49191 2.250 102.16833 73
 3 1.500 33.64903 1.500  39.49191 53
@@ -334,7 +335,7 @@ s1                    0.5531200               1  -0.4222888
 6 3.000 33.64903 3.000  39.49191 20
 7 6.125 39.49191 6.125 102.16833 77
 
-> dfCompile(tree.object)$labels %>% head
+> dfCompile(tree.object)$labels %>% head # needs package dplyr for "%>%"
       .x        .y            .label
 1 4.1875 102.16833 Petal.Length<4.25
 2 2.2500  39.49191  Petal.Length<3.4
@@ -343,7 +344,7 @@ s1                    0.5531200               1  -0.4222888
 5 5.2500  27.04709 Petal.Length<5.15
 6 4.5000  24.00201  Sepal.Width<3.05
 
-> dfCompile(tree.object)$leaf_labels %>% head
+> dfCompile(tree.object)$leaf_labels %>% head # needs package dplyr for "%>%"
    .x       .y .label    .yval
 4   1 31.29592   4.74 4.735000
 5   2 31.29592   5.17 5.169697

@@ -66,7 +66,7 @@ this function mimics the \code{\link[gam]{plot.Gam}} function from the
 when have both.}
 }
 \examples{
-libary(gam)
+library(gam)
 gam.object <- gam::gam(Sepal.Length ~ gam::s(Sepal.Width) + Species,
                        data = iris)
 

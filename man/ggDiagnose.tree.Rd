@@ -49,5 +49,5 @@ tree.object <- tree(Species ~., data = iris)
 
 plot(tree.object)
 
-ggDiagnose.tree(tree, split.labels = FALSE)
+ggDiagnose.tree(tree.object, split.labels = FALSE)
 }

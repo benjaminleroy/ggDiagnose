@@ -54,8 +54,8 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
                                          expression("Cook's dist vs Leverage  " * h[ii] / (1 - h[ii]))),
                           sub.caption = NULL, main = NULL,
                           ...,
-                          id.n = 3, labels.id = factor(names(stat::residuals(x)),
-                                                       levels = names(stat::residuals(x))),
+                          id.n = 3, labels.id = factor(names(stats::residuals(x)),
+                                                       levels = names(stats::residuals(x))),
                           qqline = TRUE, cook.levels = c(0.5, 1.0),
                           # new attributes
                           show.plot = TRUE, return = FALSE,
@@ -65,10 +65,11 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
 
   # ATTN: look at difference in .std.resid and .std.resid2
 
-  # make a warning message if any of the base functionality that we don't use
-  # is used.
-
-  # rewrite with a mutate for all desired added elements, check augment with glms and rlm
+  # so that CRAN checks pass
+  .resid <- .yhat <- .std.resid <- .sqrt.abs.resid <- .cooksd <- NULL
+  .index <- .facval <- .std.pearson.resid <- .leverage <- NULL
+  legend <- group <- .logit.leverage <- NULL
+  .weights <- y <- v <- label <- NULL
 
   # pkg requirements (for this function)
   missing.packages <- look.for.missing.packages(c("stats",
@@ -166,8 +167,8 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
   if (show[1L]) {
     ggout.list$residual.vs.yhat <-
       ggplot2::ggplot(expanded.df,
-                     ggplot2::aes(x = `.yhat`,
-                         y = `.resid`)) +
+                     ggplot2::aes(x = .yhat,
+                         y = .resid)) +
       ggplot2::geom_point(shape = shape) +
       ggplot2::labs(x = l.fit, y = "Residuals",
            title = getCaption(1)) +
@@ -344,7 +345,7 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
           dplyr::mutate(legend = as.character(legend),
                  group = as.character(group))
 
-        p <- length(stat::coef(x))
+        p <- length(stats::coef(x))
 
         hh <- seq.int(min(range.hat[1L], range.hat[2L]/100), range.hat[2L],
                       length.out = 101)
@@ -523,8 +524,11 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
 #' lm.object <- lm(Sepal.Length ~., data = iris)
 #'
 #' dfCompile.lm(lm.object) %>% head
-dfCompile.lm <- function(x, labels.id = factor(names(stat::residuals(x)),
-                                             levels = names(stat::residuals(x)))) {
+dfCompile.lm <- function(x, labels.id = factor(names(stats::residuals(x)),
+                                             levels = names(stats::residuals(x)))) {
+
+  # so that CRAN checks pass
+  .std.resid <- .weights <- .resid <- .cooksd <- .leverage <- NULL
 
   # pkg requirements (for this function)
   missing.packages <- look.for.missing.packages(c("stats"))
@@ -568,7 +572,7 @@ dfCompile.lm <- function(x, labels.id = factor(names(stat::residuals(x)),
                     } else {
                       stats::weights(x)
                     },
-                  .yhat = stat::predict(x), #!= fitted() for glm
+                  .yhat = stats::predict(x), #!= fitted() for glm
                   .resid = stats::residuals(x),
                   .leverage = stats::lm.influence(x, do.coef = FALSE)$hat,
                   .pearson.resid = stats::residuals(x, "pearson")

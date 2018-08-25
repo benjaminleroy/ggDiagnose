@@ -36,6 +36,7 @@ This function creates a \code{\link[ggplot2]{ggplot}} graphic version of
 objects.
 }
 \examples{
+library(glmnet)
 cv.glmnet.object <- cv.glmnet(y = iris$Sepal.Length,
                               x = model.matrix(Sepal.Length~., data = iris))
 

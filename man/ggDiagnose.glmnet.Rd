@@ -49,6 +49,8 @@ For \code{xvar} you have the option of selecting
 This will be the value of the variable on the x axis.
 }
 \examples{
+library(tidyverse)
+library(glmnet)
 glmnet.object <- glmnet(y = iris$Sepal.Length,
                         x = model.matrix(Sepal.Length~., data = iris))
 

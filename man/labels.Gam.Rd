@@ -4,10 +4,10 @@
 \alias{labels.Gam}
 \title{Grab term labels from \code{Gam} object}
 \usage{
-\method{labels}{Gam}(object, ...)
+\method{labels}{Gam}(x, ...)
 }
 \arguments{
-\item{object}{\code{Gam} object from package \code{gam}}
+\item{x}{\code{Gam} object from package \code{gam}}
 
 \item{...}{extra parameters (not used)}
 }
