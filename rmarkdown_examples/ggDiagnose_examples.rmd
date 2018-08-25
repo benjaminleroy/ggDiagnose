@@ -1,0 +1,212 @@
+---
+title: "ggDiagnose examples"
+output: pdf_document
+---
+
+## Installing `ggDiagnose`
+
+The follow code is how to install the package. The package "requires" you to start out with few packages. If you don't have the correct ones it will prompt you to load them when you run specific `ggDiagnose` functions.
+
+```{r eval = F}
+library(devtools)
+devtools::install_github("benjaminleroy/ggDiagnose")
+```
+
+```{r}
+library(ggDiagnose)
+```
+
+## `ggDiagnose`
+
+### `ggDiagnose.lm` 
+
+This example is for an `lm` object, function works for `glm` and `rlm` objects as well.
+
+```{r}
+lm.object <- lm(Sepal.Length ~., data = iris)
+```
+
+
+The original visualization:
+
+```{r}
+par(mfrow = c(2,3))
+plot(lm.object, which = 1:6)
+```
+
+The updated visualization (note we supressed warnings):
+
+```{r message = F}
+ggDiagnose(lm.object, which = 1:6)
+```
+
+`ggDiagnose.lm` allows for similar parameter inputs as `plot.lm` but also includes additional ones. This may changes as the package evolves. 
+
+### `ggDiagnose.glmnet`
+
+```{r message = F, warning = F}
+library(glmnet)
+glmnet.object <- glmnet(y = iris$Sepal.Length, 
+                           x = model.matrix(Sepal.Length~., data = iris))
+```
+
+The original visualization:
+
+```{r}
+plot(glmnet.object)
+```
+
+The updated visualization:
+
+```{r}
+ggDiagnose(glmnet.object)
+```
+
+
+### `ggDiagnose.cv.glmnet`
+
+```{r}
+cv.glmnet.object <- cv.glmnet(y = iris$Sepal.Length, 
+                              x = model.matrix(Sepal.Length~., data = iris))
+```
+
+The original visualization:
+
+```{r}
+plot(cv.glmnet.object)
+```
+
+The updated visualization:
+
+```{r}
+ggDiagnose(cv.glmnet.object)
+```
+
+### ggDiagnose.Gam
+
+```{r}
+library(gam)
+gam.object <- gam::gam(Sepal.Length ~ gam::s(Sepal.Width) + Species,
+                  data = iris)
+```
+
+The original visualization:
+
+```{r}
+par(mfrow = c(1,2))
+plot(gam.object, se = TRUE, residuals = TRUE)
+```
+
+
+The updated visualization:
+
+
+```{r}
+ggDiagnose(gam.object, residuals = TRUE) # se = TRUE by default
+
+```
+
+
+### ggDiagnose.tree
+
+Note, for more perfect replication of the base `plot` function add `+ ggdendro::theme_dendro()` which drops all ggplot background elements.
+
+```{r}
+library(tree)
+
+tree.object <- tree(Sepal.Length ~., data = iris)
+```
+
+The original visualization:
+
+```{r}
+plot(tree.object)
+```
+
+
+The updated visualization (followed by quick improvement):
+
+```{r}
+ggDiagnose(tree.object, split.labels = FALSE)
+```
+
+
+```{r}
+ggDiagnose(tree.object, split.labels = TRUE,
+           leaf.labels = TRUE)
+```
+
+## `dfCompile`
+
+Note this section uses functionality that can be found in the `dplyr` library.
+
+```{r message = F, warning = F}
+library(dplyr)
+```
+
+### `dfCompile.lm`
+
+```{r}
+lm.object <- lm(Sepal.Length ~., data = iris)
+dfCompile(lm.object) %>% names
+```
+
+```{r}
+dfCompile(lm.object) %>% head(2) # needs package dplyr for "%>%"
+```
+
+### `dfCompile.glmnet`
+
+```{r}
+library(glmnet)
+glmnet.object <- glmnet(y = iris$Sepal.Length,
+                        x = model.matrix(Sepal.Length~., data = iris))
+dfCompile(glmnet.object) %>% names # needs package dplyr for "%>%"
+```
+
+```{r}
+dfCompile(glmnet.object) %>% head(2) # needs package dplyr for "%>%"
+```
+
+### `dfCompile.cv.glmnet`
+
+```{r}
+library(glmnet)
+cv.glmnet.object <- cv.glmnet(y = iris$Sepal.Length,
+                              x = model.matrix(Sepal.Length~., data = iris))
+dfCompile(cv.glmnet.object) %>% names # needs package dplyr for "%>%"
+```
+
+```{r}
+dfCompile(cv.glmnet.object) %>% head(2) # needs package dplyr for "%>%"
+```
+
+### `dfCompile.Gam`
+
+```{r}
+library(gam)
+gam.object <- gam::gam(Sepal.Length ~ gam::s(Sepal.Width) + Species,
+                       data = iris)
+dfCompile(gam.object) %>% names # needs package dplyr for "%>%"
+```
+
+```{r}
+dfCompile(gam.object) %>% head(2) # needs package dplyr for "%>%"
+```
+
+### `dfCompile.tree`
+
+```{r}
+library(gam)
+gam.object <- gam::gam(Sepal.Length ~ gam::s(Sepal.Width) + Species,
+                       data = iris)
+dfCompile(tree.object) %>% length # needs package dplyr for "%>%"
+```
+
+```{r}
+dfCompile(tree.object)$segments %>% head # needs package dplyr for "%>%"
+
+dfCompile(tree.object)$labels %>% head # needs package dplyr for "%>%"
+
+dfCompile(tree.object)$leaf_labels %>% head # needs package dplyr for "%>%"
+```
