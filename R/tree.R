@@ -67,7 +67,7 @@ ggDiagnose.tree <- function(x, type = c("proportional", "uniform"),
     ggout <- ggout + ggplot2::labs(y = "Depth",
                           x = "")
   }
-  browser()
+
   if (split.labels) {
     ggout <- ggout + ggplot2::geom_text(data = compiled.df.list$labels,
                                         ggplot2::aes(x = .x, y = .y,
