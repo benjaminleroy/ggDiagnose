@@ -372,7 +372,12 @@ Overarching (when making new object functionality):
 - [ ] 5. `randomForest`
 - [ ] 6. `mclust` (multiple objects - multiple options for `Mclust` graphic. - will take time)
 - [ ] 7. PCA/factor analysis, etc objects
-- [ ] 8. look at CMU 402 for more packages
+
+CM 36-402 models' from Cosma's book
+
+- [ ] 8. `npreg` from `np`, kernel regression (pg 124)
+    - [ ] looks like a 3d option (`plotly`?) and a partial-dependence like plot 
+- [ ] 9. tree stuff - plot slices 2d? (pg ~300)
 
 `ggVis` (other objects):
 

@@ -566,7 +566,10 @@ dfCompile.lm <- function(x, labels.id = factor(names(stats::residuals(x)),
     }
   }
 
-  output.df <- data.frame(x$model) %>%
+  output.df <- data.frame(x$model)
+  names(output.df) = names(x$model)
+
+  output.df <- output.df %>%
     dplyr::mutate(.index = 1:nrow(x$model),
                   .labels.id = labels.id,
                   .weights = if (is.null(stats::weights(x))) {
