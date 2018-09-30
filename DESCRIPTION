@@ -9,10 +9,10 @@ Description: Creates wrappers that mimic base plot functional around objects
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 Imports:
     dplyr,
-    ggplot2,
+    ggplot2(>= 3.0.0),
     gridExtra,
     reshape2,
     magrittr
@@ -25,4 +25,5 @@ Suggests:
     glmnet,
     stats,
     tidyverse,
-    tree
+    tree,
+    testthat

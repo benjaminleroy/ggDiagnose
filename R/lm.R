@@ -60,7 +60,7 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
                           # new attributes
                           show.plot = TRUE, return = FALSE,
                           shape = 1,
-                          nrow = 2, smooth.color = "blue",
+                          nrow = min(2, length(which)), smooth.color = "blue",
                           dashed.color = c("red", "blue", NA, NA, "red", "black")){
 
   # ATTN: look at difference in .std.resid and .std.resid2
@@ -370,7 +370,8 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
                     ggplot2::aes(x = .leverage,
                         y = .std.pearson.resid,
                         group = group),
-                    color = dashed.color[5L], linetype = 2) +
+                    color = dashed.color[5L], linetype = 2,
+                    na.rm = TRUE) +
           ggplot2::xlim(c(0,xlim[2])) +
           ggplot2::ylim(ylim)
       }

@@ -6,8 +6,8 @@
 \usage{
 ggDiagnose.Gam(x, residuals = NULL, rugplot = TRUE, se = TRUE,
   terms = labels.Gam(x), ..., jitter = TRUE, point.shape = 1,
-  color = "black", se.color = "black", se.alpha = 0.2, se.linetype = 2,
-  show.plot = TRUE, return = FALSE, nrow = "sqrt")
+  color = "black", se.color = "black", se.alpha = 0.2,
+  se.linetype = 2, show.plot = TRUE, return = FALSE, nrow = "sqrt")
 }
 \arguments{
 \item{x}{\code{Gam} object from \code{gam} library}

@@ -4,9 +4,9 @@
 \alias{ggDiagnose.tree}
 \title{Diagnostic plot for \code{tree} object (\code{ggplot2} based)}
 \usage{
-ggDiagnose.tree(x, type = c("proportional", "uniform"), split.labels = TRUE,
-  leaf.labels = FALSE, text.size = 3, ..., show.plot = TRUE,
-  return = FALSE)
+ggDiagnose.tree(x, type = c("proportional", "uniform"),
+  split.labels = TRUE, leaf.labels = FALSE, text.size = 3, ...,
+  show.plot = TRUE, return = FALSE)
 }
 \arguments{
 \item{x}{an object of class \code{tree} from the \pkg{tree}.}
