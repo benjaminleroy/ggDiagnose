@@ -45,6 +45,9 @@ Links to examples:
 + [`ggDiagnose.cv.glmnet`](#ggdiagnosecvglmnet)
 + [`ggDiagnose.Gam`](#ggdiagnosegam)
 + [`ggDiagnose.tree`](#ggdiagnosetree)
++ [`ggDiagnose.matrix`](#ggdiagnosematrix)
+    - [`heatmap`](#heatmap-visualization)
+    - [`image`](#image-visualization)
 + ... more to come ... 
 
 **dfCompile**
@@ -54,6 +57,7 @@ Links to examples:
 + [`dfCompile.cv.glmnet`](#dfcompilecvglmnet)
 + [`dfCompile.Gam`](#dfcompilegam)
 + [`dfCompile.tree`](#dfcompiletree)
++ [`dfCompile.matrix`](#dfcompilematrix)
 + ... more to come ... 
 
 We also provide a `.rmd` file with the same examples runable in Rstudio, which can be found [here](https://raw.githubusercontent.com/benjaminleroy/ggDiagnose/master/rmarkdown_examples/ggDiagnose_examples.rmd), or by just heading to the folder labeled `rmarkdown_examples` and downloading the `ggDiagnose_examples.rmd` file.
@@ -192,6 +196,59 @@ ggDiagnose(tree.object, split.labels = TRUE,
 ```
 
 ![](images/ggDiagnose_tree_labels.jpeg)
+
+### ggDiagnose.matrix
+
+ggDiagnose.matrix actually can create a visualization of a matrix similar to the "base R"'s `image` or `heatmap`.
+
+#### Heatmap visualization
+
+The original visualization using `heatmap`
+
+```r
+data(iris)
+iris_c <- iris %>% select(-Species) %>% cor %>% as.matrix 
+
+heatmap(iris_c)
+```
+![](images/base_matrix_heatmap.jpeg)
+
+The updated visualization (note that we did a little manipulation to make the default color scheme match.) *We may make this the default within the function later.*
+
+```r
+ggDiagnose.matrix(iris_c, type = "heatmap",return = T, show.plot = F)$ggout + 
+  scale_fill_gradientn(colours = grDevices::heat.colors(10))
+```
+
+![](images/ggDiagnose_matrix_heatmap.jpeg)
+
+#### Image visualization
+
+The original function `image`:
+
+```r
+myurl = "http://stat.cmu.edu/~bpleroy/images/me.jpg"
+data = jpeg::readJPEG(RCurl::getURLContent(myurl))[,,1]
+data = t(data)[,rev(1:nrow(data))]
+```
+
+```r
+image(data, col = grey(seq(0, 1, length = 256)))
+```
+
+![](images/base_matrix_image.jpeg)
+
+The updated visualization (note that again we changed the base color to match
+with the expected output for this image.)
+
+```r
+ggDiagnose.matrix(data, type = "image",return =T, show.plot=F)$ggout + 
+  scale_fill_gradient(high = "white",low = "black") 
+```
+
+![](images/ggDiagnose_matrix_image.jpeg)
+
+
 
 ## `dfCompile`
 
@@ -356,6 +413,32 @@ s1                    0.5531200               1  -0.4222888
 12  6 24.00201   6.60 6.604000
 ```
 
+### `dfCompile.matrix`
+
+This function has an option `type` that takes either `image` or `heatmap` (see reference documentation).
+
+Note that both also provide the potential for row and column associated dendrograms.
+
+```r
+> dfCompile(iris_c, type = "heatmap")$df %>% head #needs package dplyr for "%>%"
+         .var1        .var2      value
+1  Sepal.Width  Sepal.Width  1.0000000
+2 Sepal.Length  Sepal.Width -0.1175698
+3 Petal.Length  Sepal.Width -0.4284401
+4  Petal.Width  Sepal.Width -0.3661259
+5  Sepal.Width Sepal.Length -0.1175698
+6 Sepal.Length Sepal.Length  1.0000000
+
+> dfCompile(iris_c, type = "image")$df %>% head
+         .var1        .var2      value
+1 Sepal.Length Sepal.Length  1.0000000
+2  Sepal.Width Sepal.Length -0.1175698
+3 Petal.Length Sepal.Length  0.8717538
+4  Petal.Width Sepal.Length  0.8179411
+5 Sepal.Length  Sepal.Width -0.1175698
+6  Sepal.Width  Sepal.Width  1.0000000
+```
+
 # TODO:
 
 Overarching (when making new object functionality):
@@ -382,8 +465,8 @@ CM 36-402 models' from Cosma's book
 `ggVis` (other objects):
 
 - [ ] 1. `sp`
-- [ ] 2. `dendrogram`
-- [ ] 3. `matrix` (for `heatmap`? or `image`?) - let's do both for now.
+- [ ] 2. `dendrogram` (very similar to tree, and there is already a `ggdendro`... package that would do it better. Let's not do this for now)
+- [x] 3. `matrix` (for `heatmap`? or `image`?) - let's do both for now.
 
 packages that I'm not sure can be done:
 - [ ] 1. `lme4` (these objects don't seem to have `plot._` functions to emulate.)

@@ -106,3 +106,61 @@ dev.off()
 # dfCompile(tree.object)$segments %>% head
 # dfCompile(tree.object)$labels %>% head
 # dfCompile(tree.object)$leaf_labels %>% head
+
+
+## ggDiagnose.matrix
+
+# heatmap
+data(iris)
+iris_c <- iris %>% select(-Species) %>% cor %>% as.matrix 
+
+
+jpeg(filename = paste0("base_matrix_heatmap.jpeg"),
+     width = 10, height = 6.5, units = "in", res = 100)
+heatmap(iris_c)
+dev.off()
+
+jpeg(filename = paste0("ggDiagnose_matrix_heatmap.jpeg"),
+     width = 10, height = 6.5, units = "in", res = 100)
+ggDiagnose.matrix(iris_c, type = "heatmap",return = T, show.plot = F)$ggout + 
+  scale_fill_gradientn(colours = grDevices::heat.colors(10))
+dev.off()
+
+# image
+myurl = "http://stat.cmu.edu/~bpleroy/images/me.jpg"
+data = jpeg::readJPEG(RCurl::getURLContent(myurl))[,,1]
+data = t(data)[,rev(1:nrow(data))]
+
+jpeg(filename = paste0("base_matrix_image.jpeg"),
+     width = 10, height = 6.5, units = "in", res = 100)
+image(data, col = grey(seq(0, 1, length = 256)))
+dev.off()
+
+
+jpeg(filename = paste0("ggDiagnose_matrix_image.jpeg"),
+     width = 10, height = 6.5, units = "in", res = 100)
+ggDiagnose.matrix(data, type = "image",return =T, show.plot=F)$ggout + 
+  scale_fill_gradient(high = "white",low = "black") 
+dev.off()
+
+dfCompile(iris_c, type = "heatmap")$df %>% head
+# > dfCompile(iris_c, type = "heatmap")$df %>% head
+#          .var1        .var2      value
+# 1  Sepal.Width  Sepal.Width  1.0000000
+# 2 Sepal.Length  Sepal.Width -0.1175698
+# 3 Petal.Length  Sepal.Width -0.4284401
+# 4  Petal.Width  Sepal.Width -0.3661259
+# 5  Sepal.Width Sepal.Length -0.1175698
+# 6 Sepal.Length Sepal.Length  1.0000000
+
+
+dfCompile(iris_c, type = "image")$df %>% head
+# > dfCompile(iris_c, type = "image")$df %>% head
+#          .var1        .var2      value
+# 1 Sepal.Length Sepal.Length  1.0000000
+# 2  Sepal.Width Sepal.Length -0.1175698
+# 3 Petal.Length Sepal.Length  0.8717538
+# 4  Petal.Width Sepal.Length  0.8179411
+# 5 Sepal.Length  Sepal.Width -0.1175698
+# 6  Sepal.Width  Sepal.Width  1.0000000
+
