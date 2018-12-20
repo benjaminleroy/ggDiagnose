@@ -88,6 +88,7 @@ tree.object <- tree(Sepal.Length ~., data = iris)
 jpeg(filename = paste0("base_tree.jpeg"),
      width = 10, height = 6.5, units = "in", res = 100)
 plot(tree.object)
+text(tree.object)
 dev.off()
 
 jpeg(filename = paste0("ggDiagnose_tree.jpeg"),

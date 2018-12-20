@@ -4,20 +4,6 @@ This package is geared towards data scientists, statistics students and the broa
 
 *For examples of visuals see the [example section](#examples).*
 
-## Structure
-
-`ggDiagnose` consists of 3 major functions; `ggDiagnose`, `ggVis` and `dfCompile`.
-
-The first 2, `ggDiagnose` and `ggVis` provide `ggplot2` graphics similar to what the base `plot` function would provide for the specific `R` objects. `ggDiagnose` does so for statistical model objects and `ggVis` does so for other objects.
-
-`dfCompile` provides the user with a data frame that could be used to create the `ggDiagnose` and/or `ggVis` graphics for that specific object (or at least the vast majority of the graphic/graphics). This function is similar to `broom`'s `augment` and `tidy` functions.
-
-## Philosophy
-
-This package was developed to encourage more students (and Professors teaching `R`) to work within the `tidyverse` / `ggplot2` paradigm when learning Statistical Machine Learning tools. Additionally, it quickly became a focus to also tailor this package to data scientists, providing quick and quality `ggplot2` versions of diagnostic graphics for presentations and aid in data scientists work flow.
-
-We include `dfCompile`, which is similar to `broom`'s `augment` and `tidy` functions to assist students and data scientists in building graphics to their liking (either from the ground-up or updating provided graphics) by providing the data frames that created the associated `ggDiagnose` and `ggVis` graphics. In addition, we hope that access to this "raw" data would encourage students to develop a better understanding of what is going underneath the hood (in terms of `tidyverse` and `gglot2` paradigms).
-
 # Installation
 
 To install this function, just do the following:
@@ -31,7 +17,7 @@ This package **requires** very few packages; if dependencies are required for a 
 
 # Future of the Package
 
-This package was envisioned as a package that would naturally grow to meet the needs of the users. As such, please (1) feel free to create an issue to request `ggDiagnose`/`ggVis` functionality for `R` objects and (2) develop these missing modules and submit a merge request to improve the package.
+This package was envisioned as a package that would naturally grow to meet the needs of the users. As such, please (1) feel free to create an issue to request `ggDiagnose` functionality for `R` objects and (2) develop these missing modules and submit a merge request to improve the package.
 
 
 # Examples
@@ -177,6 +163,7 @@ The original visualization:
 
 ```r
 plot(tree.object)
+text(tree.object)
 ```
 
 ![](images/base_tree.jpeg)

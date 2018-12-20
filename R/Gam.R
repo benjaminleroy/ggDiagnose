@@ -222,7 +222,7 @@ ggDiagnose.Gam <- function(x,  residuals = NULL, rugplot = TRUE, se = TRUE,
   }
 
   if (return) {
-    return(list(data = completed.df, gglist = gglist))
+    return(list(data = completed.df, ggout = gglist))
   }
 
 }

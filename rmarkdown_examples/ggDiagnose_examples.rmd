@@ -8,12 +8,15 @@ output: pdf_document
 The follow code is how to install the package. The package "requires" you to start out with few packages. If you don't have the correct ones it will prompt you to load them when you run specific `ggDiagnose` functions.
 
 ```{r eval = F}
-library(devtools)
-devtools::install_github("benjaminleroy/ggDiagnose")
+#library(devtools)
+#devtools::install_github("benjaminleroy/ggDiagnose")
 ```
 
 ```{r}
 library(ggDiagnose)
+library(ggplot2)
+library(tidyverse)
+library(gridExtra)
 ```
 
 ## `ggDiagnose`
@@ -39,6 +42,15 @@ The updated visualization (note we supressed warnings):
 ```{r message = F}
 ggDiagnose(lm.object, which = 1:6)
 ```
+
+```{r message = F}
+noleg <- ggplot2::theme(legend.position = "none")
+gglist <- ggDiagnose(lm.object, which = 1:6,return = TRUE,show.plot = FALSE)$gglist
+gglist_update <- gglist %>% lapply(function(p){p + aes_string(color = "Species") + noleg})
+
+grid.arrange(grobs = gglist_update, nrow = 2)  
+```
+
 
 `ggDiagnose.lm` allows for similar parameter inputs as `plot.lm` but also includes additional ones. This may changes as the package evolves. 
 
@@ -121,6 +133,7 @@ The original visualization:
 
 ```{r}
 plot(tree.object)
+text(tree.object)
 ```
 
 

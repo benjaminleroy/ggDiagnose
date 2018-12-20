@@ -203,14 +203,14 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
                      linetype = 2, col = dashed.color[2L])
     }
     if (id.n > 0) {
-      qq <- stats::qqnorm(expanded.df$.std.resid,plot.it = FALSE) %>%
-        data.frame() %>%
-        dplyr::mutate(.ordering.resid = expanded.df$.ordering.resid,
-               .labels.id = expanded.df$.labels.id)
+      inner <- stats::qqnorm(expanded.df$.std.resid,plot.it = FALSE)
+      qq <- expanded.df %>%
+        mutate(.qq.x = inner$x,
+               .qq.y = inner$y)
 
       ggout.list$qqnorm <- text.id(df = qq,
-              x.string = "x",
-              y.string = "y",
+              x.string = ".qq.x",
+              y.string = ".qq.x",
               id.n = id.n,
               ind.string = ".ordering.resid",
               ggbase =  ggout.list$qqnorm)
@@ -398,7 +398,9 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
                       ggplot2::aes(x = .logit.leverage,
                                    y = .cooksd)) +
       ggplot2::geom_point(shape = shape) +
-      ggplot2::geom_smooth(se = FALSE) +
+      ggplot2::geom_smooth(ggplot2::aes(x = .logit.leverage,
+                                        y = .cooksd),
+                           se = FALSE) +
       ggplot2::ylim(ylim) + #xlim(xlim) +
       ggplot2::labs(y = "Cook's distance",
                     x =  expression("Leverage  " * h[ii]),
@@ -461,7 +463,7 @@ ggDiagnose.lm <- function(x, which = c(1L:3L,5L), ## was which = 1L:4L,
   }
 
   if (return) {
-    return(list(data = expanded.df, gglist = ggout.list))
+    return(list(data = expanded.df, ggout = ggout.list))
   }
 
 }
